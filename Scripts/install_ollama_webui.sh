@@ -1,8 +1,15 @@
 #!/bin/bash
 
+HERE=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+
 if ! which docker; then
 
-    if ! ./install_docker.sh; then
+    if "$HERE"/install_docker.sh; then
+
+        echo "After re-login please run the script again."
+        exit 0
+
+    else
 
         echo "ERROR: Please install Docker"
         exit 1
