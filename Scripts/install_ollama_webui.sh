@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# FIXME: Verify the binding with local Ollama instance
+
 HERE=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 if ! which docker; then
