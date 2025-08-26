@@ -20,19 +20,27 @@ fi
 
 if [ -z "$1" ]; then
 
-    PORT="8085"
+    export PORT="8085"
 
 else
 
-    PORT="$1"
+    export PORT="$1"
 fi
 
-if docker run -d -p "$PORT":8080 --network=host -v open-webui:/app/backend/data -e OLLAMA_BASE_URL=http://127.0.0.1:11434 --name open-webui --restart always ghcr.io/open-webui/open-webui:main; then
+if docker run -d \
+  -p $PORT:8080 \
+  -v open-webui:/app/backend/data \
+  -e OLLAMA_BASE_URL=http://127.0.0.1:11434 \
+  --name open-webui \
+  --restart always \
+  ghcr.io/open-webui/open-webui:main; then
 
-    echo "Installation completed, running at port: $PORT"
+    echo "Installation completed! Open WebUI is now running on port: $PORT"
+    echo "You can access it at: http://$(hostname -I | awk '{print $1}'):$PORT"
+    echo "or at: http://localhost:$PORT on this machine."
 
 else
 
-    echo "ERROR: Installation failed"
+    echo "ERROR: Installation failed. Please check your Docker setup and try again."
     exit 1
 fi
