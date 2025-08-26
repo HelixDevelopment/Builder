@@ -4,9 +4,21 @@ HERE=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 if ! which ollama; then
 
-    if ! "$HERE"/install_ollama.sh; then
+    if "$HERE"/install_ollama.sh; then
 
-        echo "ERROR: Please install Docker"
+        if "$HERE"/configure_ollama.sh; then
+
+            echo "Ollama is ready"
+
+        else
+
+            echo "ERROR: Failed to configure Ollama"
+            exit 1
+        fi
+
+    fi
+
+        echo "ERROR: Failed to install Ollama"
         exit 1
     fi
 fi
