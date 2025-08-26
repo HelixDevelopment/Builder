@@ -2,8 +2,11 @@
 
 if ! which docker; then
 
-    echo "ERROR: Please install Docker"
-    exit 1
+    if ! ./install_docker.sh; then
+
+        echo "ERROR: Please install Docker"
+        exit 1
+    fi
 fi
 
 if [ -z "$1" ]; then
