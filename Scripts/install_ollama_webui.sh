@@ -1,7 +1,5 @@
 #!/bin/bash
 
-# FIXME: Verify the binding with local Ollama instance
-
 HERE=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 if ! which docker; then
@@ -30,7 +28,8 @@ fi
 if docker run -d \
   -p $PORT:8080 \
   -v open-webui:/app/backend/data \
-  -e OLLAMA_BASE_URL=http://127.0.0.1:11434 \
+  -e OLLAMA_BASE_URL=http://$(hostname -I | awk '{print $1}'):11434 \
+  --add-host="$hostname".local:host-gateway \
   --name open-webui \
   --restart always \
   ghcr.io/open-webui/open-webui:main; then
