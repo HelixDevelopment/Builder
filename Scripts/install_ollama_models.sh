@@ -60,7 +60,7 @@ else
     
     echo "-> Your GPU VRAM is limited. Focus on 7B models or smaller."
 
-    MODELS="$HERE/7B"
+    MODELS="$HERE/Recipes/Models/7B"
 fi
 
 echo "Note: Use 'ollama run <model_name>' to test. The system will use RAM if VRAM is full, but it will be slower."
