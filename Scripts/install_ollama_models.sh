@@ -31,7 +31,52 @@ install_models() {
         exit 1
     fi
 
+    total_models=0
+    success_count=0
+    fail_count=0
 
+    while IFS= read -r model_name; do
+
+        if [[ -z "$model_name" || "$model_name" =~ ^# ]]; then
+            
+            continue
+        fi
+        
+        ((total_models++))
+        
+        echo "$(date '+%Y-%m-%d %H:%M:%S') - Pulling: $model_name"
+        
+        if ollama pull "$model_name"; then
+            
+            echo "✓ Success: $model_name"
+            ((success_count++))
+
+        else
+            
+            echo "✗ FAILED: $model_name"
+            ((fail_count++))
+        fi
+        
+        echo "------------------------------------"
+        
+    done < "$MODELS"
+
+    echo "=============================================="
+    echo "INSTALLATION SUMMARY:" 
+    echo "Total models processed: $total_models" 
+    echo "Successfully installed: $success_count" 
+    echo "Failed: $fail_count" 
+
+    if [ $fail_count -eq 0 ]; then
+        
+        echo "🎉 All models were installed successfully!" 
+        return 0
+        
+    else
+        
+        echo "⚠️  Some models failed to install. Check the log for details." 
+        return 1
+    fi
 }
 
 if (( $(echo "$vram_info_gb >= 24" | bc -l) )); then
