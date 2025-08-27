@@ -16,30 +16,33 @@ if ! which docker; then
     fi
 fi
 
-if [ -z "$1" ]; then
+if ! docker ps | grep "open-webui"; then
 
-    export PORT="8085"
+    if [ -z "$1" ]; then
 
-else
+        export PORT="8085"
 
-    export PORT="$1"
-fi
+    else
 
-if docker run -d \
-  -p $PORT:8080 \
-  -v open-webui:/app/backend/data \
-  -e OLLAMA_BASE_URL=http://$(hostname -I | awk '{print $1}'):11434 \
-  --add-host="$hostname".local:host-gateway \
-  --name open-webui \
-  --restart always \
-  ghcr.io/open-webui/open-webui:main; then
+        export PORT="$1"
+    fi
 
-    echo "Installation completed! Open WebUI is now running on port: $PORT"
-    echo "You can access it at: http://$(hostname -I | awk '{print $1}'):$PORT"
-    echo "or at: http://localhost:$PORT on this machine."
+    if docker run -d \
+    -p $PORT:8080 \
+    -v open-webui:/app/backend/data \
+    -e OLLAMA_BASE_URL=http://$(hostname -I | awk '{print $1}'):11434 \
+    --add-host="$hostname".local:host-gateway \
+    --name open-webui \
+    --restart always \
+    ghcr.io/open-webui/open-webui:main; then
 
-else
+        echo "Installation completed! Open WebUI is now running on port: $PORT"
+        echo "You can access it at: http://$(hostname -I | awk '{print $1}'):$PORT"
+        echo "or at: http://localhost:$PORT on this machine."
 
-    echo "ERROR: Installation failed. Please check your Docker setup and try again."
-    exit 1
+    else
+
+        echo "ERROR: Installation failed. Please check your Docker setup and try again."
+        exit 1
+    fi
 fi
