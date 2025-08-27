@@ -13,6 +13,25 @@ echo ""
 echo "Ollama Model Recommendations:"
 echo "-----------------------------"
 
+install_models() {
+
+    if [ -z "$1" ] then
+    
+        echo "ERROR: Models parameter is mandatory"
+        exit 1
+    fi
+
+    MODELS="$1"
+
+    if ! test -e "$MODELS";
+
+        echo "ERROR: Models file not foun '$MODELS'"
+        exit 1
+    fi
+
+    
+}
+
 if (( $(echo "$vram_info_gb >= 24" | bc -l) )); then
     
     echo "-> Your GPU is a beast! You can likely run 70B+ models."
@@ -39,9 +58,10 @@ else
     
     echo "-> Your GPU VRAM is limited. Focus on 7B models or smaller."
 
-    echo "ERROR: Not yet implemented!"
-    exit 1
+    MODELS="$HERE/7B"
 fi
 
 echo "Note: Use 'ollama run <model_name>' to test. The system will use RAM if VRAM is full, but it will be slower."
+
+install_models "$MODELS"
 
