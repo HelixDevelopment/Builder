@@ -32,3 +32,13 @@ else
     echo "ERROR: Installation failed"
     exit 1
 fi
+
+if "$HERE/install_ollama_models.sh"; then
+
+    echo "Models have been installed wth success"
+
+else
+
+    echo "ERROR: Failed to install models"
+    exit 1
+fi
