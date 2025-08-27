@@ -16,7 +16,7 @@ if ! which ollama; then
             exit 1
         fi
 
-    fi
+    else
 
         echo "ERROR: Failed to install Ollama"
         exit 1
