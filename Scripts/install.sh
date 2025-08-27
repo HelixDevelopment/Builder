@@ -27,6 +27,16 @@ if "$HERE"/install_ollama_webui.sh; then
 
     echo "Installation completed"
 
+    if docker container restart open-webui; then
+
+        echo "Open WebUI is ready to use the new models"
+
+    else
+
+        echo "ERROR: Open WebUI failed to restart"
+        exit 1
+    fi
+
 else
 
     echo "ERROR: Installation failed"
