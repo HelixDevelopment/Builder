@@ -1,3 +1,8 @@
 qwen2:7b
+qwen3:8b
+qwen2.5-coder:7b
+deepseek-r1:7b
+deepseek-coder:6.7b
 llama3.2:8b
 mistral:7b
+openthinker:7b
