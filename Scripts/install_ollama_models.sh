@@ -1,5 +1,7 @@
 #!/bin/bash
 
+HERE=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+
 total_ram_mib=$(grep MemTotal /proc/meminfo | awk '{print $2 / 1024}')
 total_ram_gb=$(echo "$total_ram_mib / 1024" | bc -l | awk '{printf "%.1f\n", $1}')
 vram_info_mib=$(nvidia-smi --query-gpu=memory.total --format=csv,noheader,nounits | head -n1)
@@ -15,7 +17,7 @@ echo "-----------------------------"
 
 install_models() {
 
-    if [ -z "$1" ] then
+    if [ -z "$1" ]; then
     
         echo "ERROR: Models parameter is mandatory"
         exit 1
@@ -23,13 +25,13 @@ install_models() {
 
     MODELS="$1"
 
-    if ! test -e "$MODELS";
+    if ! test -e "$MODELS"; then
 
         echo "ERROR: Models file not foun '$MODELS'"
         exit 1
     fi
 
-    
+
 }
 
 if (( $(echo "$vram_info_gb >= 24" | bc -l) )); then
