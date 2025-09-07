@@ -33,7 +33,7 @@ else
     exit 1
 fi
 
-if "$HERE/install_ollama_models.sh"; then
+if "$HERE/install_ollama_models.sh" "$1"; then
 
     echo "Models have been installed wth success"
 

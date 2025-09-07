@@ -79,6 +79,14 @@ install_models() {
     fi
 }
 
+if [ -z "$1" ]; then
+
+    CATEGORY="General"
+else
+
+    CATEGORY="$1"
+fi
+
 if (( $(echo "$vram_info_gb >= 24" | bc -l) )); then
     
     echo "-> Your GPU is a beast! You can likely run 70B+ models."
@@ -105,7 +113,7 @@ else
     
     echo "-> Your GPU VRAM is limited. Focus on 7B models or smaller."
 
-    MODELS="$HERE/Recipes/Models/7B"
+    MODELS="$HERE/Recipes/Models/$CATEGORY/7B"
 fi
 
 echo "Note: Use 'ollama run <model_name>' to test. The system will use RAM if VRAM is full, but it will be slower."
