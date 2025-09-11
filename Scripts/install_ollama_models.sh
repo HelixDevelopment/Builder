@@ -39,9 +39,17 @@ install_models() {
     success_count=0
     fail_count=0
 
-    while IFS= read -r model_name; do
+    echo "------------------------------------"
+    echo "Models for installation:"
+    cat "$MODELS" && echo ""
+
+    while IFS= read -r model_name || [[ -n "$model_name" ]]; do
+
+    echo "$(date '+%Y-%m-%d %H:%M:%S') - Model: $model_name"
 
         if [[ -z "$model_name" || "$model_name" =~ ^# ]]; then
+
+            echo "$(date '+%Y-%m-%d %H:%M:%S') - Skipping: $model_name"
             
             continue
         fi
