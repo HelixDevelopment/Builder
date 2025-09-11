@@ -91,23 +91,19 @@ if (( $(echo "$vram_info_gb >= 24" | bc -l) )); then
     
     echo "-> Your GPU is a beast! You can likely run 70B+ models."
 
-    echo "ERROR: Not yet implemented!"
-    exit 1
-
+    MODELS="$HERE/Recipes/Models/$CATEGORY/70B"
 
 elif (( $(echo "$vram_info_gb >= 12" | bc -l) )); then
     
     echo "-> Great GPU. Target 13B-34B models comfortably."
 
-    echo "ERROR: Not yet implemented!"
-    exit 1
+    MODELS="$HERE/Recipes/Models/$CATEGORY/34B"
 
 elif (( $(echo "$vram_info_gb >= 8" | bc -l) )); then
     
     echo "-> Good GPU. Target 7B-13B models."
 
-    echo "ERROR: Not yet implemented!"
-    exit 1
+    MODELS="$HERE/Recipes/Models/$CATEGORY/13B"
 
 else
     

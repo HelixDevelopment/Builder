@@ -1,0 +1,3 @@
+# Animation generation models - typically handled by specialized models
+deepseek-coder:67b
+qwen2.5-coder:72b

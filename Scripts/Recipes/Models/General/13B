@@ -1,0 +1,5 @@
+qwen3:14b
+deepseek-r1:14b
+llama3.1:13b
+mistral:12b
+mixtral:8x7b

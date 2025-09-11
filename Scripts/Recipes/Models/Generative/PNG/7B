@@ -1,0 +1,5 @@
+# Image generation models for PNG format
+# Note: Most image generation happens through specialized models like Stable Diffusion
+# These entries represent text-to-image capable models available in Ollama
+llava:7b
+moondream:7b

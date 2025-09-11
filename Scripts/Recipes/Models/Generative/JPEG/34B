@@ -1,3 +1,2 @@
 # Image generation models for JPEG format
-llava:7b
-moondream:7b
+llava:34b

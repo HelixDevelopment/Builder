@@ -1,0 +1,5 @@
+# Animation generation models - typically handled by specialized models
+# Note: Animation generation is complex and may require specialized models not available in Ollama
+# These are code-based approaches for generating animation markup/code
+qwen2.5-coder:7b
+deepseek-coder:6.7b
