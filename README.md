@@ -31,3 +31,7 @@ where `CATEGORY` can be on of the following categories:
 - `Generative/SVG`
 
 *Note:* If none has been passed to the script, the `General` category will be used.
+
+## Documentation
+
+All documentation is located [here](./Documentation/README.md)
