@@ -25,9 +25,13 @@ install_models() {
 
     MODELS="$1"
 
-    if ! test -e "$MODELS"; then
+    if test -e "$MODELS"; then
 
-        echo "ERROR: Models file not foun '$MODELS'"
+        echo "Installing models from: '$MODELS'"
+
+    else
+
+        echo "ERROR: Models file not found '$MODELS'"
         exit 1
     fi
 
