@@ -1,3 +1,5 @@
+![AI Builder Pipeline](Assets/Wide_Black.png)
+
 # Builder
 
 AI powered application building pipeline
