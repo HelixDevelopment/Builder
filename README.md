@@ -34,4 +34,4 @@ where `CATEGORY` can be on of the following categories:
 
 ## Documentation
 
-All documentation is located [here](./Documentation/README.md)
+All documentation is located [here](./Documentation/README.md).
