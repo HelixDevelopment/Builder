@@ -1,7 +1,7 @@
-# Audio generation models - Most require specialized frameworks
-# Note: These models are not directly available in Ollama
-# Consider using TTS-WebUI, Coqui TTS, or Hugging Face integration
-# Format: hf.co/username/repository for Hugging Face models
-hf.co/facebook/musicgen-small
-hf.co/microsoft/speecht5_tts
-hf.co/coqui/XTTS-v2
+# Audio Generation Models - 7B Category
+# Format: model_name:type:repository_id
+# Types: musicgen, tts, bark
+# These models are installed via specialized audio framework
+musicgen-small:musicgen:facebook/musicgen-small
+speech-t5:tts:microsoft/speecht5_tts
+bark-small:bark:suno/bark

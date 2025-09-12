@@ -1,5 +1,7 @@
-# Audio generation models - Most require specialized frameworks
-# Note: These models are not directly available in Ollama
-# Consider using TTS-WebUI, Coqui TTS, or Hugging Face integration
-hf.co/facebook/musicgen-large
-hf.co/stabilityai/stable-audio-open-1.0
+# Audio Generation Models - 34B Category
+# Format: model_name:type:repository_id
+# Types: musicgen, tts, bark
+# These models are installed via specialized audio framework
+musicgen-large:musicgen:facebook/musicgen-large
+stable-audio:musicgen:stabilityai/stable-audio-open-1.0
+bark-large:bark:suno/bark

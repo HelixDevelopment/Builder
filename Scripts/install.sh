@@ -33,22 +33,44 @@ else
     exit 1
 fi
 
-if "$HERE/install_ollama_models.sh" "$1"; then
-
-    echo "Models have been installed wth success"
-
-    if docker container restart open-webui; then
-
-        echo "Open WebUI is ready to use the new models"
-
+# Check if this is an audio category and redirect to audio installer
+if [[ "$1" == *"Audio"* ]]; then
+    
+    echo "🎵 Detected audio category, using specialized audio installer..."
+    
+    if "$HERE/install_audio_models.sh" "$1"; then
+        
+        echo "🎵 Audio models have been installed successfully"
+        echo "ℹ️  Note: Audio models run independently of Ollama/WebUI"
+        echo "📋 Use the provided Python scripts to generate audio content"
+        
     else
-
-        echo "ERROR: Open WebUI failed to restart"
+        
+        echo "ERROR: Failed to install audio models"
         exit 1
     fi
 
 else
+    
+    # Use standard Ollama installer for non-audio categories
+    if "$HERE/install_ollama_models.sh" "$1"; then
 
-    echo "ERROR: Failed to install models"
-    exit 1
+        echo "Models have been installed wth success"
+
+        if docker container restart open-webui; then
+
+            echo "Open WebUI is ready to use the new models"
+
+        else
+
+            echo "ERROR: Open WebUI failed to restart"
+            exit 1
+        fi
+
+    else
+
+        echo "ERROR: Failed to install models"
+        exit 1
+    fi
+    
 fi
