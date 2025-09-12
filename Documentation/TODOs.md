@@ -5,7 +5,15 @@
 
 ## In progress
 
-- None
+- FIXME:
+
+  ```bash
+   ✘ python3 Scripts/AudioTemplates/text_to_speech.py 'Hello, this is a test'
+    Traceback (most recent call last):
+    File "/home/milosvasic/Projects/HelixDevelopment/Builder/Scripts/AudioTemplates/text_to_speech.py", line 10, in <module>
+        import soundfile as sf
+    ModuleNotFoundError: No module named 'soundfile'
+  ```
 
 ## Completed
 
