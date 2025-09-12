@@ -1,8 +1,5 @@
 # Helix Development Builder - Git Ignore Rules
 
-# Audio Models Directory - Contains large ML models and virtual environments
-AudioModels/
-
 # Python
 __pycache__/
 *.py[cod]
