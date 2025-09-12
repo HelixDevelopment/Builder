@@ -1,3 +1,5 @@
 # Image generation models for PNG format
 llava:13b
 llava-llama3:8b
+qwen2.5vl:7b
+llama3.2-vision:11b

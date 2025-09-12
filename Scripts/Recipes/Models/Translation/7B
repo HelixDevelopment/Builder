@@ -1,3 +1,7 @@
+# Multilingual translation models
+# Note: Specialized translation models may need Hugging Face integration
 aya:8b
 llama3:8b
 mistral:7b
+qwen2.5:7b
+gemma2:9b

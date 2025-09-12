@@ -1,2 +1,4 @@
 # Image generation models for PNG format
 # Note: Large image generation models are typically not available in traditional LLM sizes
+llama3.2-vision:90b
+qwen2.5vl:72b

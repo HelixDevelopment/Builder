@@ -1,2 +1,8 @@
+# Multilingual translation models
+# For specialized translation, consider Hugging Face models:
+# hf.co/facebook/nllb-200-3.3B
+# hf.co/Unbabel/TowerInstruct-13B-v0.2
 llama3.1:70b
-aya:35b
+qwen2.5:72b
+command-r-plus:104b
+llama3.1:405b

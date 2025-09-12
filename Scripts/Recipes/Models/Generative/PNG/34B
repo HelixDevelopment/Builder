@@ -1,2 +1,3 @@
 # Image generation models for PNG format
 llava:34b
+qwen2.5vl:32b

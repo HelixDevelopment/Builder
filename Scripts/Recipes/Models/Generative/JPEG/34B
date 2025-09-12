@@ -1,2 +1,3 @@
 # Image generation models for JPEG format
 llava:34b
+qwen2.5vl:32b

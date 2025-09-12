@@ -1,3 +1,9 @@
+# Multilingual translation models
+# For specialized translation, consider Hugging Face models:
+# hf.co/facebook/nllb-200-1.3B
+# hf.co/facebook/m2m100_1.2B
 aya:35b
 llama3.1:45b
 mixtral:8x22b
+qwen2.5:32b
+command-r:35b
