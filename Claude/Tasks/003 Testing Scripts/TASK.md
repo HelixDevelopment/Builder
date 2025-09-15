@@ -15,5 +15,8 @@ Since the scripts dynamically determine which models can run on local host machi
 Pay attention on the generative audio models that we support and exposed scripts to "play" with them.
 Same principle shall be applied for every other model so model can accept the request, do its job and return us result of  work in some form.
 
+Note: Running the install with proper argument passed to it to install models for particular category can take some time (in minutes or stronger) since missing models will be downloaded from 
+the remote backend(s).
+
 Once you have extended the project verify that no bugs in the scripts are intorduced and that everything works as expected.
 For this task write its TASK_REPORT.md so you can continue next time with next / upcoming task.
