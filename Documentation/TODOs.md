@@ -5,6 +5,7 @@
 
 ## In progress
 
+- TASK: [003 Testing Scripts](../Claude/Tasks/003%20Testing%20Scripts/TASK.md)
 - FIXME:
 
   ```bash
