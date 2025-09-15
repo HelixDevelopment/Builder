@@ -1,0 +1,10 @@
+# Tests Directory - All test results are temporary and should not be committed
+
+# Ignore all test data and generated content
+*
+
+# But allow this gitignore file itself
+!.gitignore
+
+# And allow README if we create one
+!README.md

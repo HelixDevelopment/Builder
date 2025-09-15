@@ -1,11 +1,5 @@
 #!/bin/bash
 
-# Check required dependencies
-if ! command -v bc &> /dev/null; then
-    echo "ERROR: bc command not found. Please install bc package."
-    exit 1
-fi
-
 HERE=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 total_ram_mib=$(grep MemTotal /proc/meminfo | awk '{print $2 / 1024}')

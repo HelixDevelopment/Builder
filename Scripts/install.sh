@@ -55,7 +55,7 @@ else
     # Use standard Ollama installer for non-audio categories
     if "$HERE/install_ollama_models.sh" "$1"; then
 
-        echo "Models have been installed wth success"
+        echo "Models have been installed with success"
 
         if docker container restart open-webui; then
 
