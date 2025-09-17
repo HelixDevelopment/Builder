@@ -75,15 +75,27 @@ Context:
 
 Based on the historical context and current issue, please analyze and provide:
 1. Root cause analysis
-2. Specific fix recommendations
-3. Bash commands to implement the fix (if applicable)
+2. Specific fix recommendations  
+3. Executable bash commands to implement the fix
 4. How to verify the fix worked
+
+IMPORTANT: For fix_commands, provide ONLY executable bash commands, not descriptions.
+
+Examples of GOOD fix_commands:
+- For MODEL_NOT_AVAILABLE: ["ollama pull model_name"]
+- For UNEXPECTED_RESPONSE: ["echo 'Retrying with different prompt'"]
+- For TIMEOUT: ["echo 'Increasing timeout handled by framework'"]
+
+Examples of BAD fix_commands (never do this):
+- ["Check the installation of the model"]  <- This is not executable
+- ["Verify the model is working"]         <- This is not executable
+- ["Fix the model configuration"]         <- This is not executable
 
 Respond in JSON format:
 {{
     "analysis": "detailed analysis of the root cause",
     "fix_type": "model_config|prompt_adjustment|system_fix|model_reinstall|other",
-    "fix_commands": ["array", "of", "bash", "commands"],
+    "fix_commands": ["array", "of", "executable", "bash", "commands"],
     "verification_steps": ["array", "of", "verification", "steps"],
     "confidence": 0.95,
     "expected_outcome": "what should happen after applying the fix"

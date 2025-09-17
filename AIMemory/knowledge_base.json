@@ -1,0 +1,13 @@
+{
+  "general_patterns": {},
+  "model_specific_tips": {
+    "openthinker:7b": [
+      "MODEL_NOT_AVAILABLE: Failed - The issue of MODEL_NOT_AVAILABLE is likely due to an incorrect or missing config",
+      "UNEXPECTED_RESPONSE: Failed - The issue is related to how Ollama interacts with AI models. The model responses"
+    ]
+  },
+  "successful_strategies": {},
+  "failure_patterns": {},
+  "version": "1.0",
+  "last_updated": "2025-09-17T20:41:53.470588"
+}

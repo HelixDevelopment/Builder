@@ -165,7 +165,7 @@ class AIMemory:
         
         # Convert to dict format
         columns = ['id', 'timestamp', 'model_name', 'issue_type', 'issue_signature', 
-                  'description', 'claude_analysis', 'fix_commands', 'fix_success', 
+                  'description', 'ai_analysis', 'fix_commands', 'fix_success', 
                   'verification_success', 'execution_time_seconds', 'system_info', 'notes']
         
         def row_to_dict(row):
@@ -207,7 +207,7 @@ class AIMemory:
         
         # Get recent fix history for this model
         cursor.execute('''
-            SELECT issue_type, fix_success, claude_analysis, timestamp 
+            SELECT issue_type, fix_success, ai_analysis, timestamp 
             FROM fix_history 
             WHERE model_name = ? 
             ORDER BY timestamp DESC LIMIT 10
@@ -298,14 +298,13 @@ class AIMemory:
         cursor = conn.cursor()
         
         # Insert fix record
-        # Insert with both ai_analysis and claude_analysis for compatibility
         analysis = ai_response.get('analysis', '')
         cursor.execute('''
             INSERT INTO fix_history 
             (timestamp, model_name, issue_type, issue_signature, description, 
-             fixer_type, ai_analysis, claude_analysis, fix_commands, fix_success, verification_success, 
+             fixer_type, ai_analysis, fix_commands, fix_success, verification_success, 
              execution_time_seconds, system_info, notes)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ''', (
             datetime.now().isoformat(),
             issue_data.get('model', ''),
@@ -314,7 +313,6 @@ class AIMemory:
             issue_data.get('description', ''),
             fixer_type,
             analysis,
-            analysis,  # Keep both columns for backward compatibility
             json.dumps(ai_response.get('fix_commands', [])),
             fix_success,
             verification_success,

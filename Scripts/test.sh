@@ -508,36 +508,48 @@ create_ai_issue_json() {
         error_output=$(cat "$model_dir/Issues/test_error.log" || echo "")
     fi
     
-    # Create JSON using Python to properly escape strings
-    python3 -c "
+    # Create JSON using Python with safe string handling
+    cat > "$output_file.tmp" << 'EOF'
 import json
 import sys
 from datetime import datetime
 
+# Read data from environment variables
+model_name = sys.argv[1]
+issue_type = sys.argv[2]
+description = sys.argv[3]
+error_output = sys.argv[4]
+actual_response = sys.argv[5]
+model_dir = sys.argv[6]
+
 # Create properly escaped JSON data
 data = {
-    'model': '''$model_name''',
-    'issue_type': '''$issue_type''',
-    'description': '''$description''',
-    'error_output': '''$error_output''',
+    'model': model_name,
+    'issue_type': issue_type,
+    'description': description,
+    'error_output': error_output,
     'test_prompt': 'What is 2+2? Answer briefly.',
     'expected_pattern': '.*4.*',
-    'actual_response': '''$actual_response''',
+    'actual_response': actual_response,
     'timestamp': datetime.now().isoformat(),
     'test_environment': {
-        'ollama_version': '$(ollama --version 2>/dev/null || echo 'unknown')',
+        'ollama_version': '$(ollama --version 2>/dev/null || echo "unknown")',
         'system': '$(uname -s)',
-        'test_dir': '''$model_dir'''
+        'test_dir': model_dir
     }
 }
 
 try:
-    with open('$output_file', 'w') as f:
+    with open(sys.argv[7], 'w') as f:
         json.dump(data, f, indent=2, ensure_ascii=False)
 except Exception as e:
     print(f'Error creating JSON: {e}', file=sys.stderr)
     sys.exit(1)
-"
+EOF
+
+    # Execute Python script with arguments to avoid quote issues
+    python3 "$output_file.tmp" "$model_name" "$issue_type" "$description" "$error_output" "$actual_response" "$model_dir" "$output_file"
+    rm -f "$output_file.tmp"
 }
 
 # Run comprehensive confirmation test of ALL models
