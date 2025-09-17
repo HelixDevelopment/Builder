@@ -125,11 +125,17 @@ test_single_model() {
     mkdir -p "$model_test_dir"/{Generated,Issues}
     
     # Check if model is available
-    if ! ollama list | grep -q "$model_name"; then
+    log_info "DEBUG: Checking availability of model: $model_name"
+    local ollama_output=$(ollama list)
+    log_info "DEBUG: Ollama list output contains: $(echo "$ollama_output" | grep "$model_name" || echo "NO MATCH")"
+    
+    if ! echo "$ollama_output" | grep -q "$model_name"; then
         log_warning "Model $model_name not available"
         document_issue "$model_name" "MODEL_NOT_AVAILABLE" "Model not installed in Ollama"
         return 1
     fi
+    
+    log_info "DEBUG: Model $model_name confirmed available"
     
     # Test the model
     local output_file="$model_test_dir/Generated/test_response.txt"
@@ -291,7 +297,9 @@ apply_fixes() {
                                     # Give Ollama a moment to update its model list
                                     sleep 2
                                     ((fixes_applied++))
+                                    log_info "DEBUG: Model fix applied, fixes_applied now = $fixes_applied"
                                     rm -f "$issue_file"  # Remove the issue file
+                                    log_info "DEBUG: Issue file removed: $issue_file"
                                 else
                                     log_error "Failed to install model: $model_name"
                                 fi
@@ -322,9 +330,12 @@ apply_fixes() {
                 
                 # Reset the model for retesting
                 rm -f "$status_file"
+                log_info "DEBUG: Reset status file for $model_name"
             fi
         fi
     done
+    
+    log_info "DEBUG: Finished processing all model directories"
     
     log_fix "Applied $fixes_applied fixes"
     log_info "DEBUG: Returning fixes count: $fixes_applied"
@@ -573,6 +584,7 @@ main() {
                     log_success "Fixes applied - retesting in next iteration"
                     ((CURRENT_ITERATION++))
                     ((FIXED_MODELS++))
+                    log_info "DEBUG: About to continue to iteration $CURRENT_ITERATION"
                     # Continue to next iteration
                     continue
                 else
