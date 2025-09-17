@@ -5,6 +5,7 @@
 
 ## In progress
 
+- Add all Upstreams supported: GitLab, GitFlic, Gitee, GitVerse
 - Cover all models by all supported Builder categories
 - Fixers: Support for Goose
 - Fixers: Auto detection between AI CLIs sorted by priority - claude, goose, qwen, etc
