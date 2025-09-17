@@ -3,11 +3,24 @@
   "model_specific_tips": {
     "openthinker:7b": [
       "MODEL_NOT_AVAILABLE: Failed - The issue of MODEL_NOT_AVAILABLE is likely due to an incorrect or missing config",
-      "UNEXPECTED_RESPONSE: Failed - The issue is related to how Ollama interacts with AI models. The model responses"
+      "UNEXPECTED_RESPONSE: Failed - The issue is related to how Ollama interacts with AI models. The model responses",
+      "UNEXPECTED_RESPONSE: Failed - ",
+      "TIMEOUT: Failed - ",
+      "TIMEOUT: Success - The issue appears to be related to how the models are handling verbose responses",
+      "UNEXPECTED_RESPONSE: Success - The issue is likely due to the model's inability to correctly parse and generate",
+      "UNEXPECTED_RESPONSE: Success - The root cause is that the models are responding in verbose format instead of ex"
     ]
   },
-  "successful_strategies": {},
+  "successful_strategies": {
+    "TIMEOUT": [
+      "The issue appears to be related to how the models are handling verbose responses and simple answers."
+    ],
+    "UNEXPECTED_RESPONSE": [
+      "The issue is likely due to the model's inability to correctly parse and generate responses based on ",
+      "The root cause is that the models are responding in verbose format instead of expected simple answer"
+    ]
+  },
   "failure_patterns": {},
   "version": "1.0",
-  "last_updated": "2025-09-17T20:41:53.470588"
+  "last_updated": "2025-09-17T21:02:48.722215"
 }

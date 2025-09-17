@@ -269,8 +269,15 @@ class AIMemory:
                 analysis = match.get('ai_analysis') or match.get('claude_analysis', '')
                 context_parts.append(f"- {success_str}: {analysis[:100]}...")
                 if match['fix_success']:
-                    commands = json.loads(match['fix_commands'])
-                    context_parts.append(f"  Successful fix: {commands[0] if commands else 'N/A'}")
+                    try:
+                        fix_commands_str = match['fix_commands']
+                        if fix_commands_str and fix_commands_str.strip():
+                            commands = json.loads(fix_commands_str)
+                            context_parts.append(f"  Successful fix: {commands[0] if commands else 'N/A'}")
+                        else:
+                            context_parts.append(f"  Successful fix: No commands recorded")
+                    except (json.JSONDecodeError, KeyError) as e:
+                        context_parts.append(f"  Successful fix: [Command parse error]")
         
         if similar_issues['model_matches']:
             context_parts.append(f"\n🔧 Same model, same issue type ({len(similar_issues['model_matches'])}):")

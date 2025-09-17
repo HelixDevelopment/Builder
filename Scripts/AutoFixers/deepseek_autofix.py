@@ -91,17 +91,18 @@ Examples of BAD fix_commands (never do this):
 - ["Verify the model is working"]         <- This is not executable
 - ["Fix the model configuration"]         <- This is not executable
 
-Respond in JSON format:
+Respond ONLY with valid JSON in this exact format:
 {{
-    "analysis": "detailed analysis of the root cause",
-    "fix_type": "model_config|prompt_adjustment|system_fix|model_reinstall|other",
-    "fix_commands": ["array", "of", "executable", "bash", "commands"],
-    "verification_steps": ["array", "of", "verification", "steps"],
-    "confidence": 0.95,
-    "expected_outcome": "what should happen after applying the fix"
+    "analysis": "The model is giving verbose responses instead of the expected simple answer",
+    "fix_type": "prompt_adjustment",
+    "fix_commands": ["echo 'Model behavior noted - using alternative prompt strategy'"],
+    "verification_steps": ["Re-test with adjusted timeout"],
+    "confidence": 0.8,
+    "expected_outcome": "Model should respond more appropriately or timeout will be adjusted"
 }}
 
-Respond only with the JSON, no other text."""
+Important: Use only one of these fix_type values: prompt_adjustment, system_fix, model_config, other
+Do not use pipe symbols or multiple values. Respond only with the JSON above."""
 
         try:
             # Create a temporary file for the prompt
@@ -125,7 +126,14 @@ Respond only with the JSON, no other text."""
             import re
             json_match = re.search(r'\{.*\}', response_text, re.DOTALL)
             if json_match:
-                return json.loads(json_match.group())
+                try:
+                    return json.loads(json_match.group())
+                except json.JSONDecodeError as e:
+                    return {
+                        "error": f"DeepSeek returned invalid JSON: {str(e)}", 
+                        "raw_response": response_text,
+                        "extracted_json": json_match.group()
+                    }
             else:
                 return {"error": "Could not parse DeepSeek's response", "raw_response": response_text}
                 
