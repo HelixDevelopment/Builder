@@ -35,7 +35,7 @@ def main():
             except:
                 pass  # Use basic flags if detection fails
             
-            cmd = [sys.executable, "-m", "pip", "install", "transformers", "sentencepiece"] + pip_flags
+            cmd = [sys.executable, "-m", "pip", "install", "transformers", "sentencepiece", "soundfile"] + pip_flags
             subprocess.check_call(cmd)
             from transformers import pipeline
         except Exception as install_error:

@@ -154,6 +154,7 @@ install_audio_dependencies() {
     $pip_cmd $pip_flags install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
     $pip_cmd $pip_flags install transformers
     $pip_cmd $pip_flags install sentencepiece  # Fix for TTS models
+    $pip_cmd $pip_flags install datasets  # For speaker embeddings
     $pip_cmd $pip_flags install scipy
     $pip_cmd $pip_flags install librosa
     $pip_cmd $pip_flags install soundfile

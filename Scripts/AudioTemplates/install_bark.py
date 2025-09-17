@@ -86,9 +86,9 @@ def main():
             except:
                 pass  # Use basic flags if detection fails
             
-            # Install bark with detected flags
+            # Install bark and soundfile with detected flags
             cmd = [sys.executable, "-m", "pip", "install", 
-                   "git+https://github.com/suno-ai/bark.git"] + pip_flags
+                   "git+https://github.com/suno-ai/bark.git", "soundfile"] + pip_flags
             subprocess.check_call(cmd)
             import bark
             from bark import SAMPLE_RATE, generate_audio, preload_models

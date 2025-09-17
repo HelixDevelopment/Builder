@@ -5,6 +5,16 @@
 
 ## In progress
 
+- Web ui for tasks with APIs (instead of manual editing). After we create or edit task submit with confirmation sends it to execution to the AI
+- Command for CLI AI has  to be customizable with the def. val. and to run in headless mode
+- Auto detection between AI CLIs sorted by priority - claude, goose, qwen, etc
+- Recipes for adding more tests (each test scenario is defined by the recipe)
+
+## Completed
+
+- FIXME: Audio model for 7B does not exist on Ollama
+- Make sure that every model before it is installed is checked if exists in Ollama, as fallback pull it and apply from Hugging Face
+- TASK: [003 Testing Scripts](../Claude/Tasks/003%20Testing%20Scripts/TASK.md)
 - FIXME:
 
   ```bash
@@ -15,8 +25,3 @@
     ModuleNotFoundError: No module named 'soundfile'
   ```
 
-## Completed
-
-- FIXME: Audio model for 7B does not exist on Ollama
-- Make sure that every model before it is installed is checked if exists in Ollama, as fallback pull it and apply from Hugging Face
-- TASK: [003 Testing Scripts](../Claude/Tasks/003%20Testing%20Scripts/TASK.md)
