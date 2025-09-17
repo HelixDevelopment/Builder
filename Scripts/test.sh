@@ -327,6 +327,7 @@ apply_fixes() {
     done
     
     log_fix "Applied $fixes_applied fixes"
+    log_info "DEBUG: Returning fixes count: $fixes_applied"
     return $fixes_applied
 }
 
@@ -554,7 +555,7 @@ main() {
     
     # Main test-fix-retest loop
     while [ $CURRENT_ITERATION -le $MAX_ITERATIONS ]; do
-        log_info "Starting iteration $CURRENT_ITERATION..."
+        log_info "Starting iteration $CURRENT_ITERATION (max: $MAX_ITERATIONS)..."
         
         if run_test_iteration; then
             log_success "All tests passed! No issues found."
@@ -572,6 +573,8 @@ main() {
                     log_success "Fixes applied - retesting in next iteration"
                     ((CURRENT_ITERATION++))
                     ((FIXED_MODELS++))
+                    # Continue to next iteration
+                    continue
                 else
                     log_error "No fixes could be applied - stopping"
                     break
