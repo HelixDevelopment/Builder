@@ -1,0 +1,10 @@
+[0;35m[FIX][0m Analyzing failed models and applying fixes...
+[0;35m[FIX][0m Scanning project codebase for issues to fix...
+[0;35m[FIX][0m Adding dependency check for 'bc' command in install_ollama_models.sh
+[0;32m[SUCCESS][0m Added dependency check for bc command
+[0;35m[FIX][0m Applied 1 codebase fixes
+[0;35m[FIX][0m Attempting to fix issues for: openthinker:7b
+[0;35m[FIX][0m Fixing issue: MODEL_NOT_AVAILABLE for openthinker:7b
+[0;35m[FIX][0m Attempting to install model: openthinker:7b
+[0;32m[SUCCESS][0m Model openthinker:7b installed successfully
+[0;35m[FIX][0m Applied 2 fixes

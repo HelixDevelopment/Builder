@@ -264,7 +264,8 @@ apply_fixes() {
     log_fix "Analyzing failed models and applying fixes..."
     
     # FIRST: Check and fix codebase issues that could be causing model failures
-    local codebase_fixes=$(apply_codebase_fixes)
+    apply_codebase_fixes
+    local codebase_fixes=$?
     fixes_applied=$((fixes_applied + codebase_fixes))
     
     # THEN: Find all failed models and apply model-specific fixes
@@ -287,6 +288,8 @@ apply_fixes() {
                                 log_fix "Attempting to install model: $model_name"
                                 if timeout 300 ollama pull "$model_name"; then
                                     log_success "Model $model_name installed successfully"
+                                    # Give Ollama a moment to update its model list
+                                    sleep 2
                                     ((fixes_applied++))
                                     rm -f "$issue_file"  # Remove the issue file
                                 else
@@ -342,7 +345,7 @@ apply_codebase_fixes() {
     fi
     
     # Fix 2: Check for missing dependency validation in install scripts
-    if ! grep -q "command -v bc" install_ollama_models.sh 2>/dev/null; then
+    if [ -f "install_ollama_models.sh" ] && ! grep -q "command -v bc" install_ollama_models.sh 2>/dev/null; then
         log_fix "Adding dependency check for 'bc' command in install_ollama_models.sh"
         # Create a backup and add dependency check
         cp install_ollama_models.sh install_ollama_models.sh.backup
@@ -562,7 +565,10 @@ main() {
             if [ "$AUTO_FIX" = "true" ]; then
                 log_fix "Auto-fix enabled - attempting to resolve issues..."
                 
-                if apply_fixes > 0; then
+                apply_fixes
+                local fixes_applied_count=$?
+                log_info "DEBUG: Fixes applied count: $fixes_applied_count"
+                if [ $fixes_applied_count -gt 0 ]; then
                     log_success "Fixes applied - retesting in next iteration"
                     ((CURRENT_ITERATION++))
                     ((FIXED_MODELS++))
