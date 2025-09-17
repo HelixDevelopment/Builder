@@ -5,9 +5,9 @@
 
 ## In progress
 
-- Web ui for tasks with APIs (instead of manual editing). After we create or edit task submit with confirmation sends it to execution to the AI
-- Command for CLI AI has  to be customizable with the def. val. and to run in headless mode
-- Auto detection between AI CLIs sorted by priority - claude, goose, qwen, etc
+- Fixers: Support for Goose
+- Fixers: Auto detection between AI CLIs sorted by priority - claude, goose, qwen, etc
+- Web UI for tasks with APIs (instead of manual editing). After we create or edit task submit with confirmation sends it to execution to the AI
 - Recipes for adding more tests (each test scenario is defined by the recipe)
 
 ## Completed
@@ -24,4 +24,6 @@
         import soundfile as sf
     ModuleNotFoundError: No module named 'soundfile'
   ```
+- Command for CLI AI has to be customizable with the def. val. and to run in headless mode
+- Fixers: Add support for multiple `Fixers` - Besides `Claude` add `Qwen` as option/default one
 

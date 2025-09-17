@@ -14,6 +14,7 @@ HERE=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 # Configuration
 AUTO_FIX=${AUTO_FIX:-false}
+FIXER_TYPE=${FIXER_TYPE:-deepseek}
 TEST_DATE=$(date +%Y-%m-%d)
 TESTS_DIR="$HERE/../Tests/$TEST_DATE"
 TIMEOUT_DURATION=30
@@ -43,16 +44,24 @@ parse_arguments() {
                 AUTO_FIX=true
                 shift
                 ;;
+            --fixer=*)
+                FIXER_TYPE="${1#*=}"
+                shift
+                ;;
             --date=*)
                 TEST_DATE="${1#*=}"
                 TESTS_DIR="$HERE/../Tests/$TEST_DATE"
                 shift
                 ;;
             --help)
-                echo "Usage: $0 [--auto-fix] [--date=YYYY-MM-DD] [--help]"
+                echo "Usage: $0 [--auto-fix] [--fixer=TYPE] [--date=YYYY-MM-DD] [--help]"
                 echo "  --auto-fix: Enable automatic fixing of detected issues"
+                echo "  --fixer=TYPE: Choose AI fixer (claude, qwen, deepseek) - default: deepseek"
                 echo "  --date=YYYY-MM-DD: Use specific date for test results"
                 echo "  --help: Show this help"
+                echo ""
+                echo "Available fixers:"
+                python3 "$HERE/AutoFixers/autofix_manager.py" list 2>/dev/null || echo "  Run with --auto-fix to see available fixers"
                 exit 0
                 ;;
             *)
@@ -274,6 +283,15 @@ apply_fixes() {
     local codebase_fixes=$?
     fixes_applied=$((fixes_applied + codebase_fixes))
     
+    # SECOND: Use AI-powered intelligent analysis and fixing
+    if command -v python3 &> /dev/null; then
+        log_fix "🤖 AI-powered intelligent auto-fix enabled (using: $FIXER_TYPE)"
+        local ai_fixes=$(apply_ai_fixes)
+        fixes_applied=$((fixes_applied + ai_fixes))
+    else
+        log_warning "⚠️  AI auto-fix disabled (missing python3)"
+    fi
+    
     # THEN: Find all failed models and apply model-specific fixes
     for model_dir in "$TESTS_DIR"/*/; do
         if [ -d "$model_dir" ]; then
@@ -421,6 +439,198 @@ apply_codebase_fixes() {
     return $codebase_fixes
 }
 
+# Apply Claude-powered intelligent fixes
+apply_ai_fixes() {
+    local ai_fixes=0
+    
+    log_fix "🤖 Analyzing issues with $FIXER_TYPE..." >&2
+    
+    # Find all failed models and create issue data for AI analysis
+    for model_dir in "$TESTS_DIR"/*/; do
+        if [ -d "$model_dir" ]; then
+            local model_name=$(basename "$model_dir")
+            local status_file="$model_dir/test_status.txt"
+            
+            if [ -f "$status_file" ] && [ "$(cat "$status_file")" = "FAILED" ]; then
+                log_fix "🔍 $FIXER_TYPE analyzing: $model_name" >&2
+                
+                # Create issue data JSON for AI analysis
+                local issue_json="$model_dir/ai_issue.json"
+                create_ai_issue_json "$model_name" "$model_dir" "$issue_json"
+                
+                # Use AI to analyze and fix via the manager
+                if python3 "$HERE/AutoFixers/autofix_manager.py" fix "$issue_json" "$FIXER_TYPE" >&2; then
+                    log_success "✅ $FIXER_TYPE successfully fixed: $model_name" >&2
+                    ((ai_fixes++))
+                    
+                    # Remove issue files since AI fixed it
+                    rm -f "$model_dir/Issues"/*.md
+                    rm -f "$status_file"
+                else
+                    log_error "❌ $FIXER_TYPE could not fix: $model_name" >&2
+                fi
+            fi
+        fi
+    done
+    
+    log_fix "$FIXER_TYPE applied $ai_fixes intelligent fixes" >&2
+    echo $ai_fixes
+}
+
+# Create JSON issue data for AI analysis
+create_ai_issue_json() {
+    local model_name="$1"
+    local model_dir="$2"
+    local output_file="$3"
+    
+    # Collect issue information
+    local issue_type="UNKNOWN"
+    local description="Unknown issue"
+    local error_output=""
+    local actual_response=""
+    
+    # Read issue files to get details
+    for issue_file in "$model_dir/Issues"/*.md; do
+        if [ -f "$issue_file" ]; then
+            issue_type=$(basename "$issue_file" .md)
+            description=$(grep -A 1 "## Description" "$issue_file" | tail -1 || echo "No description")
+            break
+        fi
+    done
+    
+    # Get actual response if available
+    if [ -f "$model_dir/Generated/test_response.txt" ]; then
+        actual_response=$(cat "$model_dir/Generated/test_response.txt" || echo "")
+    fi
+    
+    # Get error output if available
+    if [ -f "$model_dir/Issues/test_error.log" ]; then
+        error_output=$(cat "$model_dir/Issues/test_error.log" || echo "")
+    fi
+    
+    # Create JSON using Python to properly escape strings
+    python3 -c "
+import json
+import sys
+from datetime import datetime
+
+# Create properly escaped JSON data
+data = {
+    'model': '''$model_name''',
+    'issue_type': '''$issue_type''',
+    'description': '''$description''',
+    'error_output': '''$error_output''',
+    'test_prompt': 'What is 2+2? Answer briefly.',
+    'expected_pattern': '.*4.*',
+    'actual_response': '''$actual_response''',
+    'timestamp': datetime.now().isoformat(),
+    'test_environment': {
+        'ollama_version': '$(ollama --version 2>/dev/null || echo 'unknown')',
+        'system': '$(uname -s)',
+        'test_dir': '''$model_dir'''
+    }
+}
+
+try:
+    with open('$output_file', 'w') as f:
+        json.dump(data, f, indent=2, ensure_ascii=False)
+except Exception as e:
+    print(f'Error creating JSON: {e}', file=sys.stderr)
+    sys.exit(1)
+"
+}
+
+# Run comprehensive confirmation test of ALL models
+run_full_confirmation_test() {
+    log_info "🚀 Starting comprehensive confirmation test..."
+    
+    local confirmation_total=0
+    local confirmation_passed=0
+    local confirmation_failed=0
+    
+    # Test ALL models from all categories
+    local model_size=$(cat "$TESTS_DIR/model_size.txt")
+    
+    # Test General models
+    local general_models_file="$HERE/Recipes/Models/General/$model_size"
+    if [ -f "$general_models_file" ]; then
+        log_info "📋 Confirmation testing General models..."
+        while IFS= read -r model_name || [[ -n "$model_name" ]]; do
+            if [[ -z "$model_name" || "$model_name" =~ ^# ]]; then
+                continue
+            fi
+            
+            ((confirmation_total++))
+            log_info "🔍 Confirming: $model_name"
+            
+            if test_single_model_confirmation "$model_name"; then
+                ((confirmation_passed++))
+                log_success "✅ CONFIRMED: $model_name"
+            else
+                ((confirmation_failed++))
+                log_error "❌ CONFIRMATION FAILED: $model_name"
+            fi
+        done < "$general_models_file"
+    fi
+    
+    # Test Coder models  
+    local coder_models_file="$HERE/Recipes/Models/Coder/$model_size"
+    if [ -f "$coder_models_file" ]; then
+        log_info "📋 Confirmation testing Coder models..."
+        while IFS= read -r model_name || [[ -n "$model_name" ]]; do
+            if [[ -z "$model_name" || "$model_name" =~ ^# ]]; then
+                continue
+            fi
+            
+            ((confirmation_total++))
+            log_info "🔍 Confirming: $model_name"
+            
+            if test_single_model_confirmation "$model_name" "Write a Python hello function. Show only code." "def.*hello"; then
+                ((confirmation_passed++))
+                log_success "✅ CONFIRMED: $model_name"
+            else
+                ((confirmation_failed++))
+                log_error "❌ CONFIRMATION FAILED: $model_name"
+            fi
+        done < "$coder_models_file"
+    fi
+    
+    # Generate confirmation report
+    log_info "📊 Confirmation Test Results:"
+    log_info "   Total models tested: $confirmation_total"
+    log_success "   Confirmed working: $confirmation_passed"
+    log_error "   Failed confirmation: $confirmation_failed"
+    
+    if [ $confirmation_failed -eq 0 ]; then
+        log_success "🎉 ALL MODELS CONFIRMED WORKING!"
+        return 0
+    else
+        log_error "⚠️  Some models failed final confirmation"
+        return 1
+    fi
+}
+
+# Test a single model for confirmation (streamlined version)
+test_single_model_confirmation() {
+    local model_name="$1"
+    local test_prompt="${2:-What is 2+2? Answer briefly.}"
+    local expected_pattern="${3:-.*4.*}"
+    
+    # Quick availability check
+    if ! ollama list | grep -q "$model_name"; then
+        return 1
+    fi
+    
+    # Quick response test
+    local response=$(echo "$test_prompt" | timeout 30 ollama run "$model_name" 2>/dev/null | head -5 | tr -d '\n\r' | sed 's/[[:space:]]\+/ /g')
+    
+    if [[ "$response" =~ $expected_pattern ]]; then
+        return 0
+    else
+        return 1
+    fi
+}
+
 # Run test iteration
 run_test_iteration() {
     log_info "=== Test Iteration $CURRENT_ITERATION ==="
@@ -493,7 +703,7 @@ generate_final_report() {
 
 **Date**: $TEST_DATE  
 **Total Iterations**: $CURRENT_ITERATION  
-**Auto-Fix Enabled**: $AUTO_FIX
+**Auto-Fix Enabled**: $AUTO_FIX$([ "$AUTO_FIX" = "true" ] && echo " (using: $FIXER_TYPE)" || echo "")
 
 ## Final Results
 
@@ -561,6 +771,9 @@ main() {
     
     log_info "Starting test-fix-retest loop"
     log_info "Auto-fix mode: $([ "$AUTO_FIX" = "true" ] && echo "ENABLED" || echo "DISABLED")"
+    if [ "$AUTO_FIX" = "true" ]; then
+        log_info "AI Fixer: $FIXER_TYPE"
+    fi
     
     setup_test_environment
     
@@ -570,6 +783,12 @@ main() {
         
         if run_test_iteration; then
             log_success "All tests passed! No issues found."
+            
+            # Run final confirmation test of ALL models
+            if [ $CURRENT_ITERATION -gt 1 ]; then
+                log_info "🎯 Running final confirmation test of ALL models..."
+                run_full_confirmation_test
+            fi
             break
         else
             log_warning "Some tests failed in iteration $CURRENT_ITERATION"
