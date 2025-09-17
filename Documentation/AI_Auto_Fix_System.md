@@ -304,12 +304,12 @@ The AI Auto-Fix System features a sophisticated memory system that learns from e
 ### Components
 
 #### 1. Fix History Database
-- **Storage**: SQLite database (`ClaudeMemory/claude_memory.db`)
+- **Storage**: SQLite database (`AIMemory/ai_memory.db`)
 - **Records**: Every fix attempt with full context
 - **Fields**: 
   - Timestamp and execution time
   - Model name and issue type
-  - AI provider used (claude, qwen, etc.)
+  - AI provider used (deepseek, qwen, claude, etc.)
   - Analysis and fix commands
   - Success/failure status
   - Verification results
@@ -326,6 +326,12 @@ When analyzing new issues, the system provides AI fixers with:
 - **Model History**: Past performance for the specific model
 - **Successful Strategies**: Proven solutions for similar issues
 - **Failure Patterns**: What to avoid based on past attempts
+
+#### 4. Database Schema Migration
+The system has been updated to use a generic `ai_analysis` column instead of the provider-specific `claude_analysis` to support all AI providers:
+- **Backward Compatibility**: Automatically migrates from old schema
+- **Provider Agnostic**: Works with any AI provider (DeepSeek, Qwen, Claude, etc.)
+- **Error Handling**: Robust JSON parsing with fallback for malformed data
 
 ### Learning Progression
 - **First Run**: Basic rule-based fixes only
@@ -380,7 +386,7 @@ For Qwen, you can specify different models:
 ```
 
 ### Memory System Configuration
-The memory system can be customized by modifying `Scripts/claude_memory.py`:
+The memory system can be customized by modifying `Scripts/ai_memory.py`:
 - Database location
 - Retention policies
 - Pattern matching algorithms
@@ -476,6 +482,38 @@ pip3 install requests
 conda install requests
 ```
 
+#### DeepSeek Issues
+
+**Problem**: "DeepSeek model not available"
+```bash
+# Check Ollama installation
+ollama --version
+
+# Install Ollama if missing
+curl -fsSL https://ollama.ai/install.sh | sh
+
+# Check available models
+ollama list
+
+# Install DeepSeek model
+ollama pull deepseek-coder:6.7b
+```
+
+**Problem**: "JSON parsing errors" or "Invalid control character"
+```bash
+# This indicates special characters in test data
+# The system now handles this automatically with Python JSON encoding
+# If issues persist, check for corrupted test files
+```
+
+**Problem**: "Database schema error: no such column"
+```bash
+# The system automatically migrates old database schemas
+# If migration fails, backup and recreate:
+mv AIMemory/ai_memory.db AIMemory/ai_memory.db.backup
+# System will create new database on next run
+```
+
 #### General Issues
 
 **Problem**: "No fixers available"
@@ -491,7 +529,14 @@ conda install requests
 # Make scripts executable
 chmod +x Scripts/test.sh
 chmod +x ai_fixers.sh
-chmod +x claude_memory.sh
+chmod +x memory.sh
+```
+
+**Problem**: "Bash arithmetic error" or function return value issues
+```bash
+# This was fixed in recent updates - ensure you have latest version
+# Error occurred when log output mixed with return values
+# Now all logs are redirected to stderr properly
 ```
 
 ### Debug Mode
@@ -503,9 +548,9 @@ export CLAUDE_DEBUG=1
 
 ### Log Files
 Check these locations for detailed logs:
-- `Tests/YYYY-MM-DD/*/claude_issue.json` - AI analysis data
-- `ClaudeMemory/claude_memory.db` - Fix history database
-- `ClaudeMemory/knowledge_base.json` - Accumulated knowledge
+- `Tests/YYYY-MM-DD/*/ai_issue.json` - AI analysis data
+- `AIMemory/ai_memory.db` - Fix history database
+- `AIMemory/knowledge_base.json` - Accumulated knowledge
 
 ## API Reference
 
@@ -534,10 +579,10 @@ fixers = AutoFixManager.list_available_fixers()
 
 ### Memory System API
 ```python
-from Scripts.claude_memory import ClaudeMemory
+from Scripts.ai_memory import AIMemory
 
 # Initialize memory system
-memory = ClaudeMemory()
+memory = AIMemory()
 
 # Record a fix attempt
 fix_id = memory.record_fix_attempt(
@@ -553,7 +598,7 @@ similar = memory.query_similar_issues(issue_data)
 insights = memory.get_model_insights("model-name")
 
 # Build context for AI
-context = memory.build_context_for_claude(issue_data)
+context = memory.build_context_for_ai(issue_data)
 
 # Get statistics
 stats = memory.get_memory_stats()
