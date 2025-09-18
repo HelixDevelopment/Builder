@@ -1,6 +1,7 @@
 # TODOs
 
 - For each category create debate AI group
+  - Each coder group shall contain of one coder and one regular model of same model family, for example qwen + qwen-coder
   - Expose the debate group via Ollama for API access
 
 ## For later
