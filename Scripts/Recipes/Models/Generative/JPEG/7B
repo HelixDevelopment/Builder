@@ -1,6 +1,6 @@
 # Image generation models for JPEG format
 # Note: Same as PNG models but for JPEG output format
 llava:7b
-moondream:7b
+llava-llama3:8b
 bakllava:7b
 minicpm-v:8b

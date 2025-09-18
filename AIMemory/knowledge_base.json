@@ -9,7 +9,29 @@
       "TIMEOUT: Success - The issue appears to be related to how the models are handling verbose responses",
       "UNEXPECTED_RESPONSE: Success - The issue is likely due to the model's inability to correctly parse and generate",
       "UNEXPECTED_RESPONSE: Success - The root cause is that the models are responding in verbose format instead of ex",
-      "TIMEOUT: Success - The issue is identified as verbose responses instead of simple answers by the mo"
+      "TIMEOUT: Success - The issue is identified as verbose responses instead of simple answers by the mo",
+      "UNEXPECTED_RESPONSE: Success - The issue appears to be related to how models handle prompts and responses in au"
+    ],
+    "Animation_starcoder2:7b": [
+      "UNEXPECTED_RESPONSE: Success - The issue here is rooted in how models handle prompts and responses when used fo"
+    ],
+    "Audio_bark-small": [
+      "AUDIO_FRAMEWORK_MISSING: Failed - The issue seems to be related to how the audio framework is installed and config"
+    ],
+    "Audio_musicgen-small": [
+      "AUDIO_FRAMEWORK_MISSING: Failed - The issue is caused by a missing Audio framework in the installation script of t"
+    ],
+    "Audio_speech-t5": [
+      "AUDIO_FRAMEWORK_MISSING: Failed - "
+    ],
+    "JPEG_moondream:7b": [
+      "MODEL_NOT_AVAILABLE: Failed - "
+    ],
+    "PNG_moondream:7b": [
+      "MODEL_NOT_AVAILABLE: Failed - The issue arises because the current test model PNG_moondream:7b is not installe"
+    ],
+    "SVG_codellama:7b": [
+      "UNEXPECTED_RESPONSE: Success - The root cause of this issue is that models are responding in verbose format ins"
     ]
   },
   "successful_strategies": {
@@ -19,10 +41,13 @@
     ],
     "UNEXPECTED_RESPONSE": [
       "The issue is likely due to the model's inability to correctly parse and generate responses based on ",
-      "The root cause is that the models are responding in verbose format instead of expected simple answer"
+      "The root cause is that the models are responding in verbose format instead of expected simple answer",
+      "The issue appears to be related to how models handle prompts and responses in automated tests for AI",
+      "The issue here is rooted in how models handle prompts and responses when used for automated testing.",
+      "The root cause of this issue is that models are responding in verbose format instead of expected sim"
     ]
   },
   "failure_patterns": {},
   "version": "1.0",
-  "last_updated": "2025-09-17T21:10:52.601647"
+  "last_updated": "2025-09-18T15:23:38.498815"
 }
