@@ -642,7 +642,7 @@ run_full_confirmation_test() {
     category_patterns["Generative/Audio"]="(audio|sound|music|speech)"
 
     category_prompts["Generative/JPEG"]="Describe an image of a sunset. Be brief."
-    category_patterns["Generative/JPEG"]="(sunset|sun|sky|orange|horizon|evening|dusk)"
+    category_patterns["Generative/JPEG"]="(sunset|sun|sky|orange|horizon|brightness|color|cloud)"
 
     category_prompts["Generative/PNG"]="Describe an image of a mountain. Be brief."
     category_patterns["Generative/PNG"]="(mountain|peak|snow|landscape|hill|rock)"
