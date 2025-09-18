@@ -5,7 +5,7 @@
 
 ## In progress
 
-- FIXME: Make sure that tests are running with no errors or warnings
+- TASK: [FIXME: 005 Make sure that tests are running with no errors or warnings](../AITasks/Tasks/005%20Fix%20errors%20produced%20during%20the%20tests%20execution/TASK.md) [Qwen]
 - Integrate RAG with Fixers to pickup from out memory database
 - Fixers: Support for Goose
 - Fixers: Auto detection between AI CLIs sorted by priority - claude, goose, qwen, etc
@@ -14,9 +14,9 @@
 
 ## Completed
 
-- FIXME: Audio model for 7B does not exist on Ollama
-- Make sure that every model before it is installed is checked if exists in Ollama, as fallback pull it and apply from Hugging Face
-- TASK: [003 Testing Scripts](../AITasks/Tasks/003%20Testing%20Scripts/TASK.md)
+- FIXME: Audio model for 7B does not exist on Ollama [Claude]
+- Make sure that every model before it is installed is checked if exists in Ollama, as fallback pull it and apply from Hugging Face [Claude]
+- TASK: [003 Testing Scripts](../AITasks/Tasks/003%20Testing%20Scripts/TASK.md) [Claude]
 - FIXME:
 
   ```bash
@@ -25,10 +25,10 @@
     File "Builder/Scripts/AudioTemplates/text_to_speech.py", line 10, in <module>
         import soundfile as sf
     ModuleNotFoundError: No module named 'soundfile'
-  ```
+  ``` [Claude]
 - Command for CLI AI has to be customizable with the def. val. and to run in headless mode
-- Fixers: Add support for multiple `Fixers` - Besides `Claude` add `Qwen` as option/default one
+- Fixers: Add support for multiple `Fixers` - Besides `Claude` add `Qwen` as option/default one [Claude]
 - Add all Upstreams supported: GitLab, GitFlic, Gitee, GitVerse
-- TASK: [004 Cover all models by all supported Builder categories](../AITasks/Tasks/004%20Cover%20all%20models%20by%20all%20supported%20Builder%20categories/TASK.md)
-- Write log files during the testing
+- TASK: [004 Cover all models by all supported Builder categories](../AITasks/Tasks/004%20Cover%20all%20models%20by%20all%20supported%20Builder%20categories/TASK.md) [Claude]
+- Write log files during the testing [Claude]
 
