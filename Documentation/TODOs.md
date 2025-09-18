@@ -9,6 +9,7 @@
 
 ## In progress
 
+- TASK: [006 Hello Goose](../AITasks/Tasks/006%20Hello%20Goose/TASK.md) [Goose@michaelneale/deepseek-r1-goose:latest]
 - Integrate RAG with Fixers to pickup from out memory database
 - Fixers: Support for Goose
 - Fixers: Auto detection between AI CLIs sorted by priority - claude, goose, qwen, etc
