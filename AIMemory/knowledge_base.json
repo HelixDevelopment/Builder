@@ -10,23 +10,28 @@
       "UNEXPECTED_RESPONSE: Success - The issue is likely due to the model's inability to correctly parse and generate",
       "UNEXPECTED_RESPONSE: Success - The root cause is that the models are responding in verbose format instead of ex",
       "TIMEOUT: Success - The issue is identified as verbose responses instead of simple answers by the mo",
-      "UNEXPECTED_RESPONSE: Success - The issue appears to be related to how models handle prompts and responses in au"
+      "UNEXPECTED_RESPONSE: Success - The issue appears to be related to how models handle prompts and responses in au",
+      "TIMEOUT: Success - The model is returning a verbose response that doesn'<\uff5cbegin\u2581of\u2581sentence\uff5c> expla"
     ],
     "Animation_starcoder2:7b": [
       "UNEXPECTED_RESPONSE: Success - The issue here is rooted in how models handle prompts and responses when used fo",
-      "UNEXPECTED_RESPONSE: Success - The issue appears to be related to how models respond when given a specific inpu"
+      "UNEXPECTED_RESPONSE: Success - The issue appears to be related to how models respond when given a specific inpu",
+      "UNEXPECTED_RESPONSE: Success - The issue is likely due to the models' verbose responses instead of expected sim"
     ],
     "Audio_bark-small": [
       "AUDIO_FRAMEWORK_MISSING: Failed - The issue seems to be related to how the audio framework is installed and config",
-      "AUDIO_FRAMEWORK_MISSING: Failed - The issue is likely due to a misconfiguration in Ollama's settings for the Audio"
+      "AUDIO_FRAMEWORK_MISSING: Failed - The issue is likely due to a misconfiguration in Ollama's settings for the Audio",
+      "AUDIO_FRAMEWORK_MISSING: Success - The audio framework is missing in the current environment which prevents models "
     ],
     "Audio_musicgen-small": [
       "AUDIO_FRAMEWORK_MISSING: Failed - The issue is caused by a missing Audio framework in the installation script of t",
-      "AUDIO_FRAMEWORK_MISSING: Failed - The root cause of this issue is that the audio framework for the model is missin"
+      "AUDIO_FRAMEWORK_MISSING: Failed - The root cause of this issue is that the audio framework for the model is missin",
+      "AUDIO_FRAMEWORK_MISSING: Success - The audio framework is not installed which prevents models from processing audio"
     ],
     "Audio_speech-t5": [
       "AUDIO_FRAMEWORK_MISSING: Failed - ",
-      "AUDIO_FRAMEWORK_MISSING: Success - The issue seems to be rooted in the configuration of the audio framework. It is "
+      "AUDIO_FRAMEWORK_MISSING: Success - The issue seems to be rooted in the configuration of the audio framework. It is ",
+      "AUDIO_FRAMEWORK_MISSING: Success - The issue seems to be related to the installation of audio framework for the AI "
     ],
     "JPEG_moondream:7b": [
       "MODEL_NOT_AVAILABLE: Failed - "
@@ -38,7 +43,8 @@
       "UNEXPECTED_RESPONSE: Success - The root cause of this issue is that models are responding in verbose format ins"
     ],
     "JPEG_llava-llama3:8b": [
-      "MODEL_NOT_AVAILABLE: Success - The model is giving verbose responses instead of the expected simple answer"
+      "MODEL_NOT_AVAILABLE: Success - The model is giving verbose responses instead of the expected simple answer",
+      "MODEL_NOT_AVAILABLE: Failed - The issue is due to the model being unavailable in Ollama. This usually means th"
     ],
     "PNG_bakllava:7b": [
       "UNEXPECTED_RESPONSE: Success - The model is giving verbose responses instead of expected simple answer"
@@ -48,12 +54,16 @@
     ],
     "codellama:7b": [
       "UNEXPECTED_RESPONSE: Failed - The issue is due to how models handle prompts and responses in automated tests f"
+    ],
+    "JPEG_bakllava:7b": [
+      "UNEXPECTED_RESPONSE: Success - The issue is likely due to how models handle unexpected responses."
     ]
   },
   "successful_strategies": {
     "TIMEOUT": [
       "The issue appears to be related to how the models are handling verbose responses and simple answers.",
-      "The issue is identified as verbose responses instead of simple answers by the model."
+      "The issue is identified as verbose responses instead of simple answers by the model.",
+      "The model is returning a verbose response that doesn'<\uff5cbegin\u2581of\u2581sentence\uff5c> explain what 4 actually m"
     ],
     "UNEXPECTED_RESPONSE": [
       "The issue is likely due to the model's inability to correctly parse and generate responses based on ",
@@ -62,10 +72,15 @@
       "The issue here is rooted in how models handle prompts and responses when used for automated testing.",
       "The root cause of this issue is that models are responding in verbose format instead of expected sim",
       "The issue appears to be related to how models respond when given a specific input that they are desi",
-      "The model is giving verbose responses instead of expected simple answer"
+      "The model is giving verbose responses instead of expected simple answer",
+      "The issue is likely due to the models' verbose responses instead of expected simple answers. This co",
+      "The issue is likely due to how models handle unexpected responses."
     ],
     "AUDIO_FRAMEWORK_MISSING": [
-      "The issue seems to be rooted in the configuration of the audio framework. It is not installed which "
+      "The issue seems to be rooted in the configuration of the audio framework. It is not installed which ",
+      "The audio framework is missing in the current environment which prevents models from processing audi",
+      "The audio framework is not installed which prevents models from processing audio inputs",
+      "The issue seems to be related to the installation of audio framework for the AI model."
     ],
     "MODEL_NOT_AVAILABLE": [
       "The model is giving verbose responses instead of the expected simple answer"
@@ -73,5 +88,5 @@
   },
   "failure_patterns": {},
   "version": "1.0",
-  "last_updated": "2025-09-18T15:51:59.977451"
+  "last_updated": "2025-09-18T16:13:26.950328"
 }

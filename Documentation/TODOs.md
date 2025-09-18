@@ -5,6 +5,7 @@
 
 ## In progress
 
+- FIXME: Make sure that tests are running with no errors or warnings
 - Integrate RAG with Fixers to pickup from out memory database
 - Fixers: Support for Goose
 - Fixers: Auto detection between AI CLIs sorted by priority - claude, goose, qwen, etc
