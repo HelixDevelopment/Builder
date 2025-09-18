@@ -20,6 +20,10 @@ TESTS_DIR="$HERE/../Tests/$TEST_DATE"
 TIMEOUT_DURATION=30
 MAX_ITERATIONS=5
 
+# Logging configuration
+LOG_FILE=""
+LOG_ENABLED=false
+
 # Colors for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -72,30 +76,74 @@ parse_arguments() {
     done
 }
 
+# Write to log file if enabled
+write_log() {
+    if [ "$LOG_ENABLED" = true ] && [ -n "$LOG_FILE" ]; then
+        echo "$*" >> "$LOG_FILE"
+    fi
+}
+
+# Logging functions that write to both console and file
 log_info() {
-    echo -e "${BLUE}[INFO]${NC} $*"
+    local message="${BLUE}[INFO]${NC} $*"
+    echo -e "$message"
+    write_log "[$(date '+%Y-%m-%d %H:%M:%S')] [INFO] $*"
 }
 
 log_success() {
-    echo -e "${GREEN}[SUCCESS]${NC} $*"
+    local message="${GREEN}[SUCCESS]${NC} $*"
+    echo -e "$message"
+    write_log "[$(date '+%Y-%m-%d %H:%M:%S')] [SUCCESS] $*"
 }
 
 log_warning() {
-    echo -e "${YELLOW}[WARNING]${NC} $*"
+    local message="${YELLOW}[WARNING]${NC} $*"
+    echo -e "$message"
+    write_log "[$(date '+%Y-%m-%d %H:%M:%S')] [WARNING] $*"
 }
 
 log_error() {
-    echo -e "${RED}[ERROR]${NC} $*"
+    local message="${RED}[ERROR]${NC} $*"
+    echo -e "$message"
+    write_log "[$(date '+%Y-%m-%d %H:%M:%S')] [ERROR] $*"
 }
 
 log_fix() {
-    echo -e "${PURPLE}[FIX]${NC} $*"
+    local message="${PURPLE}[FIX]${NC} $*"
+    echo -e "$message"
+    write_log "[$(date '+%Y-%m-%d %H:%M:%S')] [FIX] $*"
+}
+
+log_raw() {
+    echo "$*"
+    write_log "$*"
 }
 
 # Setup test environment
 setup_test_environment() {
-    log_info "Setting up test environment for $TEST_DATE"
     mkdir -p "$TESTS_DIR"
+
+    # Initialize logging
+    LOG_FILE="$TESTS_DIR/test_run.log"
+    LOG_ENABLED=true
+
+    # Create log file with header
+    cat > "$LOG_FILE" << EOF
+================================================================================
+AI Model Testing Framework - Complete Test Run Log
+================================================================================
+Date: $(date '+%Y-%m-%d %H:%M:%S')
+Test Directory: $TESTS_DIR
+Auto-Fix Mode: $AUTO_FIX
+Fixer Type: $FIXER_TYPE
+Max Iterations: $MAX_ITERATIONS
+Timeout Duration: ${TIMEOUT_DURATION}s
+================================================================================
+
+EOF
+
+    log_info "Setting up test environment for $TEST_DATE"
+    log_info "Log file created at: $LOG_FILE"
     
     # Detect VRAM and set model size
     if command -v nvidia-smi &> /dev/null; then
@@ -275,8 +323,9 @@ EOF
 # Apply fixes for detected issues
 apply_fixes() {
     local fixes_applied=0
-    
+
     log_fix "Analyzing failed models and applying fixes..."
+    write_log "\n--- Starting Fix Phase ---"
     
     # FIRST: Check and fix codebase issues that could be causing model failures
     apply_codebase_fixes
@@ -359,6 +408,7 @@ apply_fixes() {
     log_info "DEBUG: Finished processing all model directories"
     
     log_fix "Applied $fixes_applied fixes"
+    write_log "--- Fix Phase Complete: $fixes_applied fixes applied ---\n"
     log_info "DEBUG: Returning fixes count: $fixes_applied"
     return $fixes_applied
 }
@@ -700,6 +750,7 @@ test_single_model_confirmation() {
 # Run test iteration
 run_test_iteration() {
     log_info "=== Test Iteration $CURRENT_ITERATION ==="
+    write_log "Starting test iteration $CURRENT_ITERATION at $(date '+%Y-%m-%d %H:%M:%S')"
 
     TOTAL_MODELS=0
     PASSED_MODELS=0
@@ -742,6 +793,12 @@ run_test_iteration() {
     test_category "Generative/SVG" "$model_size" "Generate SVG code for a blue square. Show only the SVG code." "<svg.*rect"
 
     log_info "Iteration $CURRENT_ITERATION Results: $PASSED_MODELS passed, $FAILED_MODELS failed out of $TOTAL_MODELS total"
+    write_log "\nIteration $CURRENT_ITERATION Summary:"
+    write_log "  Total Models: $TOTAL_MODELS"
+    write_log "  Passed: $PASSED_MODELS"
+    write_log "  Failed: $FAILED_MODELS"
+    write_log "  Success Rate: $([ $TOTAL_MODELS -gt 0 ] && echo "$(( (PASSED_MODELS * 100) / TOTAL_MODELS ))%" || echo "N/A")"
+    write_log "  Completed at: $(date '+%Y-%m-%d %H:%M:%S')\n"
 
     return $FAILED_MODELS
 }
@@ -829,10 +886,14 @@ test_category() {
 
     if [ ! -f "$models_file" ]; then
         log_warning "Models file not found for $category: $models_file"
+        write_log "  Recipe file does not exist"
         return 1
     fi
 
     log_info "Testing $category models from: $models_file"
+    write_log "  Category: $category"
+    write_log "  Model Size: $model_size"
+    write_log "  Recipe File: $models_file"
 
     local category_models=0
     local category_passed=0
@@ -860,6 +921,7 @@ test_category() {
 
     if [ $category_models -gt 0 ]; then
         log_info "$category results: $category_passed/$category_models passed"
+        write_log "  Category Summary: $category_passed passed, $((category_models - category_passed)) failed out of $category_models total"
     fi
 }
 
@@ -871,17 +933,25 @@ test_single_model_with_dir() {
     local model_test_dir="$4"
 
     log_info "Testing model: $model_name"
+    write_log "  Prompt: $test_prompt"
+    write_log "  Expected Pattern: $expected_pattern"
+    write_log "  Test Directory: $model_test_dir"
 
     mkdir -p "$model_test_dir"/{Generated,Issues}
 
     # Check if model is available
-    local ollama_output=$(ollama list)
+    write_log "  Checking model availability..."
+    local ollama_output=$(ollama list 2>&1)
+    write_log "  Ollama list output: $(echo "$ollama_output" | wc -l) lines"
 
     if ! echo "$ollama_output" | grep -q "$model_name"; then
         log_warning "Model $model_name not available"
+        write_log "  Model not found in Ollama registry"
         document_issue_with_dir "$model_name" "MODEL_NOT_AVAILABLE" "Model not installed in Ollama" "$model_test_dir"
         return 1
     fi
+
+    write_log "  Model confirmed available"
 
     # Test the model
     local output_file="$model_test_dir/Generated/test_response.txt"
@@ -903,8 +973,12 @@ test_single_model_with_dir() {
             local response_content=$(cat "$output_file")
             local cleaned_response=$(echo "$response_content" | tr -d '\n\r' | sed 's/[[:space:]]\+/ /g')
 
+            write_log "  Raw response length: ${#response_content} characters"
+            write_log "  Cleaned response: $cleaned_response"
+
             if [[ "$cleaned_response" =~ $expected_pattern ]]; then
                 log_success "✅ $model_name PASSED"
+                write_log "  Pattern match successful"
                 echo "PASSED" > "$model_test_dir/test_status.txt"
 
                 # Create report
@@ -934,16 +1008,23 @@ EOF
                 return 0
             else
                 log_error "❌ $model_name response doesn't match pattern"
+                write_log "  Pattern match failed"
+                write_log "  Expected pattern: $expected_pattern"
+                write_log "  Actual response: $cleaned_response"
                 document_issue_with_dir "$model_name" "UNEXPECTED_RESPONSE" "Response '$cleaned_response' doesn't match pattern '$expected_pattern'" "$model_test_dir"
                 return 1
             fi
         else
             log_error "❌ $model_name produced no output"
+            write_log "  No output generated"
             document_issue_with_dir "$model_name" "NO_OUTPUT" "Model produced no output within timeout" "$model_test_dir"
             return 1
         fi
     else
+        local exit_code=$?
         log_error "❌ $model_name timed out or failed"
+        write_log "  Command failed with exit code: $exit_code"
+        write_log "  Timeout: ${TIMEOUT_DURATION}s"
         document_issue_with_dir "$model_name" "TIMEOUT" "Model failed to respond within ${TIMEOUT_DURATION}s" "$model_test_dir"
         return 1
     fi
@@ -1013,8 +1094,24 @@ EOF
 # Generate final report
 generate_final_report() {
     log_info "Generating final test report..."
-    
+
     local report_file="$TESTS_DIR/COMPREHENSIVE_TEST_REPORT.md"
+
+    # Add summary to log file
+    write_log ""
+    write_log "================================================================================"
+    write_log "FINAL TEST RESULTS SUMMARY"
+    write_log "================================================================================"
+    write_log "Total Iterations: $CURRENT_ITERATION"
+    write_log "Total Models Tested: $TOTAL_MODELS"
+    write_log "Passed: $PASSED_MODELS"
+    write_log "Failed: $FAILED_MODELS"
+    write_log "Auto-Fixed: $FIXED_MODELS"
+    if [ $TOTAL_MODELS -gt 0 ]; then
+        local success_rate=$(( (PASSED_MODELS * 100) / TOTAL_MODELS ))
+        write_log "Success Rate: ${success_rate}%"
+    fi
+    write_log "================================================================================"
     
     cat > "$report_file" << EOF
 # Comprehensive Test Report
@@ -1063,8 +1160,9 @@ EOF
 \`\`\`
 Tests/$TEST_DATE/
 ├── COMPREHENSIVE_TEST_REPORT.md (this file)
+├── test_run.log (complete test execution log)
 ├── model_size.txt
-└── <model_name>/
+└── <Category>_<model_name>/
     ├── Generated/
     │   ├── test_response.txt
     │   └── test_response_raw.txt
@@ -1073,6 +1171,12 @@ Tests/$TEST_DATE/
     ├── Report.md
     └── test_status.txt
 \`\`\`
+
+## Log Files
+
+- **Complete Test Log**: [test_run.log](test_run.log)
+- **Log Size**: $([ -f "$LOG_FILE" ] && du -h "$LOG_FILE" | cut -f1 || echo "N/A")
+- **Log Lines**: $([ -f "$LOG_FILE" ] && wc -l < "$LOG_FILE" || echo "0") lines
 
 ---
 *Report generated by comprehensive test framework*
@@ -1083,6 +1187,7 @@ EOF
 
 # Main execution
 main() {
+    # Display header (will be captured in log via main wrapper)
     echo -e "${CYAN}╔════════════════════════════════════════╗${NC}"
     echo -e "${CYAN}║       AI Model Testing Framework       ║${NC}"
     echo -e "${CYAN}║     Test-Fix-Retest Loop System        ║${NC}"
@@ -1090,14 +1195,18 @@ main() {
     echo
     
     parse_arguments "$@"
-    
+
+    # Setup must happen first to initialize logging
+    setup_test_environment
+
     log_info "Starting test-fix-retest loop"
     log_info "Auto-fix mode: $([ "$AUTO_FIX" = "true" ] && echo "ENABLED" || echo "DISABLED")"
     if [ "$AUTO_FIX" = "true" ]; then
         log_info "AI Fixer: $FIXER_TYPE"
     fi
-    
-    setup_test_environment
+    write_log "Command line arguments: $*"
+    write_log "Current working directory: $(pwd)"
+    write_log "Script location: $HERE"
     
     # Main test-fix-retest loop
     while [ $CURRENT_ITERATION -le $MAX_ITERATIONS ]; do
@@ -1163,7 +1272,16 @@ main() {
     echo
     log_info "Detailed results at: $TESTS_DIR"
     log_info "Comprehensive report: $TESTS_DIR/COMPREHENSIVE_TEST_REPORT.md"
+    log_info "Complete test log: $TESTS_DIR/test_run.log"
     
+    # Final log summary
+    write_log "\n================================================================================"
+    write_log "TEST RUN COMPLETE"
+    write_log "================================================================================"
+    write_log "End time: $(date '+%Y-%m-%d %H:%M:%S')"
+    write_log "Exit status: $([ $FAILED_MODELS -eq 0 ] && echo "SUCCESS (0)" || echo "FAILURE (1)")"
+    write_log "================================================================================"
+
     # Exit with appropriate code
     if [ $FAILED_MODELS -eq 0 ]; then
         log_success "🎉 All tests passed! System is working correctly."
@@ -1174,5 +1292,20 @@ main() {
     fi
 }
 
-# Execute main function
-main "$@"
+# Wrapper to capture all output
+run_with_logging() {
+    # Run main and capture all output
+    main "$@" 2>&1 | while IFS= read -r line; do
+        echo "$line"
+        if [ "$LOG_ENABLED" = true ] && [ -n "$LOG_FILE" ]; then
+            # Strip ANSI color codes for log file
+            echo "$line" | sed 's/\x1b\[[0-9;]*m//g' >> "$LOG_FILE"
+        fi
+    done
+
+    # Capture exit code
+    return ${PIPESTATUS[0]}
+}
+
+# Execute main function with logging
+run_with_logging "$@"

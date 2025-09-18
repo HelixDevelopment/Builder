@@ -5,7 +5,6 @@
 
 ## In progress
 
-- TASK: [004 Cover all models by all supported Builder categories](../AITasks/Tasks/004%20Cover%20all%20models%20by%20all%20supported%20Builder%20categories/TASK.md)
 - Integrate RAG with Fixers to pickup from out memory database
 - Fixers: Support for Goose
 - Fixers: Auto detection between AI CLIs sorted by priority - claude, goose, qwen, etc
@@ -29,4 +28,6 @@
 - Command for CLI AI has to be customizable with the def. val. and to run in headless mode
 - Fixers: Add support for multiple `Fixers` - Besides `Claude` add `Qwen` as option/default one
 - Add all Upstreams supported: GitLab, GitFlic, Gitee, GitVerse
+- TASK: [004 Cover all models by all supported Builder categories](../AITasks/Tasks/004%20Cover%20all%20models%20by%20all%20supported%20Builder%20categories/TASK.md)
+- Write log files during the testing
 
