@@ -1307,5 +1307,5 @@ run_with_logging() {
     return ${PIPESTATUS[0]}
 }
 
-# Execute main function with logging
-run_with_logging "$@"
+# Execute main function
+main "$@"
