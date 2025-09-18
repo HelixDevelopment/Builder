@@ -99,7 +99,7 @@ Respond only with the JSON, no other text."""
             
             # Call Qwen model via Ollama
             cmd = f'ollama run {self.model_name} < "{temp_prompt_file}"'
-            result = subprocess.run(cmd, shell=True, capture_output=True, text=True, timeout=120)
+            result = subprocess.run(['bash', '-c', cmd], capture_output=True, text=True, timeout=120)
             
             # Clean up temp file
             os.unlink(temp_prompt_file)
@@ -133,7 +133,7 @@ Respond only with the JSON, no other text."""
         for command in fix_data["fix_commands"]:
             print(f"🔨 Executing: {command}")
             try:
-                result = subprocess.run(command, shell=True, capture_output=True, text=True)
+                result = subprocess.run(['bash', '-c', command], capture_output=True, text=True)
                 if result.returncode != 0:
                     print(f"❌ Command failed: {result.stderr}")
                     return False
@@ -157,7 +157,7 @@ Respond only with the JSON, no other text."""
         try:
             # Test the model with the same prompt
             test_cmd = f'echo "{test_prompt}" | ollama run {model_name}'
-            result = subprocess.run(test_cmd, shell=True, capture_output=True, text=True, timeout=30)
+            result = subprocess.run(['bash', '-c', test_cmd], capture_output=True, text=True, timeout=30)
             
             if result.returncode != 0:
                 print(f"❌ Model test failed: {result.stderr}")

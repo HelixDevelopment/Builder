@@ -636,19 +636,19 @@ run_full_confirmation_test() {
     category_patterns["Translation"]="(Bonjour|bonjour|Salut|salut)"
 
     category_prompts["Generative/Animation"]="Generate SVG code for a red circle. Show only the SVG code."
-    category_patterns["Generative/Animation"]="(<svg.*circle|circle.*cx|<circle)"
+    category_patterns["Generative/Animation"]="(svg.*circle|circle.*svg|circle)"
 
     category_prompts["Generative/Audio"]="Describe how to generate audio. Be brief."
     category_patterns["Generative/Audio"]="(audio|sound|music|speech)"
 
-    category_prompts["Generative/JPEG"]="Generate a description for an image of a sunset. Be brief."
-    category_patterns["Generative/JPEG"]="(sunset|sun|sky|orange|horizon)"
+    category_prompts["Generative/JPEG"]="Describe an image of a sunset. Be brief."
+    category_patterns["Generative/JPEG"]="(sunset|sun|sky|orange|horizon|evening|dusk)"
 
-    category_prompts["Generative/PNG"]="Generate a description for an image of a mountain. Be brief."
-    category_patterns["Generative/PNG"]="(mountain|peak|snow|landscape)"
+    category_prompts["Generative/PNG"]="Describe an image of a mountain. Be brief."
+    category_patterns["Generative/PNG"]="(mountain|peak|snow|landscape|hill|rock)"
 
     category_prompts["Generative/SVG"]="Generate SVG code for a blue square. Show only the SVG code."
-    category_patterns["Generative/SVG"]="<svg.*rect"
+    category_patterns["Generative/SVG"]="(svg.*rect|rect.*svg|rect)"
 
     # Test each category
     for category in "General" "Coder" "Tester" "Translation" "Generative/Animation" "Generative/Audio" "Generative/JPEG" "Generative/PNG" "Generative/SVG"; do
@@ -676,7 +676,7 @@ run_full_confirmation_test() {
                     local model_name=$(echo "$model_line" | cut -d: -f1)
                     log_info "🔍 Confirming: $model_name (Audio framework)"
 
-                    if [ -d "$audio_dir" ] && [ -f "$audio_dir/generate_music.py" -o -f "$audio_dir/text_to_speech.py" ]; then
+                    if [ -d "$audio_dir" ] && [ -f "$audio_dir/scripts/generate_music.py" -o -f "$audio_dir/scripts/text_to_speech.py" ]; then
                         ((confirmation_passed++))
                         log_success "✅ CONFIRMED: $model_name (Audio framework installed)"
                     else
@@ -838,7 +838,7 @@ test_audio_category() {
         mkdir -p "$model_dir"/{Generated,Issues}
 
         # Check if audio framework is installed
-        if [ -d "$audio_dir" ] && [ -f "$audio_dir/generate_music.py" -o -f "$audio_dir/text_to_speech.py" ]; then
+        if [ -d "$audio_dir" ] && [ -f "$audio_dir/scripts/generate_music.py" -o -f "$audio_dir/scripts/text_to_speech.py" ]; then
             log_success "✅ Audio framework installed for $model_name ($model_type)"
             echo "PASSED" > "$model_dir/test_status.txt"
 

@@ -21,12 +21,14 @@
     "Audio_bark-small": [
       "AUDIO_FRAMEWORK_MISSING: Failed - The issue seems to be related to how the audio framework is installed and config",
       "AUDIO_FRAMEWORK_MISSING: Failed - The issue is likely due to a misconfiguration in Ollama's settings for the Audio",
-      "AUDIO_FRAMEWORK_MISSING: Success - The audio framework is missing in the current environment which prevents models "
+      "AUDIO_FRAMEWORK_MISSING: Success - The audio framework is missing in the current environment which prevents models ",
+      "AUDIO_FRAMEWORK_MISSING: Success - The issue is rooted in the configuration or installation of the audio framework."
     ],
     "Audio_musicgen-small": [
       "AUDIO_FRAMEWORK_MISSING: Failed - The issue is caused by a missing Audio framework in the installation script of t",
       "AUDIO_FRAMEWORK_MISSING: Failed - The root cause of this issue is that the audio framework for the model is missin",
-      "AUDIO_FRAMEWORK_MISSING: Success - The audio framework is not installed which prevents models from processing audio"
+      "AUDIO_FRAMEWORK_MISSING: Success - The audio framework is not installed which prevents models from processing audio",
+      "AUDIO_FRAMEWORK_MISSING: Failed - The issue is rooted in the configuration of the audio framework. It's not instal"
     ],
     "Audio_speech-t5": [
       "AUDIO_FRAMEWORK_MISSING: Failed - ",
@@ -44,19 +46,22 @@
     ],
     "JPEG_llava-llama3:8b": [
       "MODEL_NOT_AVAILABLE: Success - The model is giving verbose responses instead of the expected simple answer",
-      "MODEL_NOT_AVAILABLE: Failed - The issue is due to the model being unavailable in Ollama. This usually means th"
+      "MODEL_NOT_AVAILABLE: Failed - The issue is due to the model being unavailable in Ollama. This usually means th",
+      "MODEL_NOT_AVAILABLE: Failed - The error is likely due to a configuration issue where Ollama does not recognize"
     ],
     "PNG_bakllava:7b": [
       "UNEXPECTED_RESPONSE: Success - The model is giving verbose responses instead of expected simple answer"
     ],
     "PNG_llava-llama3:8b": [
-      "MODEL_NOT_AVAILABLE: Failed - The issue is likely due to the fact that the AI model is not installed correctly"
+      "MODEL_NOT_AVAILABLE: Failed - The issue is likely due to the fact that the AI model is not installed correctly",
+      "MODEL_NOT_AVAILABLE: Failed - "
     ],
     "codellama:7b": [
       "UNEXPECTED_RESPONSE: Failed - The issue is due to how models handle prompts and responses in automated tests f"
     ],
     "JPEG_bakllava:7b": [
-      "UNEXPECTED_RESPONSE: Success - The issue is likely due to how models handle unexpected responses."
+      "UNEXPECTED_RESPONSE: Success - The issue is likely due to how models handle unexpected responses.",
+      "UNEXPECTED_RESPONSE: Failed - The issue is likely due to the model's inability to correctly parse and generate"
     ]
   },
   "successful_strategies": {
@@ -80,7 +85,8 @@
       "The issue seems to be rooted in the configuration of the audio framework. It is not installed which ",
       "The audio framework is missing in the current environment which prevents models from processing audi",
       "The audio framework is not installed which prevents models from processing audio inputs",
-      "The issue seems to be related to the installation of audio framework for the AI model."
+      "The issue seems to be related to the installation of audio framework for the AI model.",
+      "The issue is rooted in the configuration or installation of the audio framework. The current environ"
     ],
     "MODEL_NOT_AVAILABLE": [
       "The model is giving verbose responses instead of the expected simple answer"
@@ -88,5 +94,5 @@
   },
   "failure_patterns": {},
   "version": "1.0",
-  "last_updated": "2025-09-18T16:13:26.950328"
+  "last_updated": "2025-09-18T16:48:58.006944"
 }

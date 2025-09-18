@@ -117,7 +117,7 @@ Respond in JSON format:
         for command in fix_data["fix_commands"]:
             print(f"🔨 Executing: {command}")
             try:
-                result = subprocess.run(command, shell=True, capture_output=True, text=True)
+                result = subprocess.run(['bash', '-c', command], capture_output=True, text=True)
                 if result.returncode != 0:
                     print(f"❌ Command failed: {result.stderr}")
                     return False
@@ -141,7 +141,7 @@ Respond in JSON format:
         try:
             # Test the model with the same prompt
             test_cmd = f'echo "{test_prompt}" | ollama run {model_name}'
-            result = subprocess.run(test_cmd, shell=True, capture_output=True, text=True, timeout=30)
+            result = subprocess.run(['bash', '-c', test_cmd], capture_output=True, text=True, timeout=30)
             
             if result.returncode != 0:
                 print(f"❌ Model test failed: {result.stderr}")

@@ -3,6 +3,10 @@
 - For each category create debate AI group
   - Expose the debate group via Ollama for API access
 
+## For later
+
+- Make sure that our scripts present its work like qwen code cli: [https://github.com/QwenLM/qwen-code](https://github.com/QwenLM/qwen-code)
+
 ## In progress
 
 - TASK: [FIXME: 005 Make sure that tests are running with no errors or warnings](../AITasks/Tasks/005%20Fix%20errors%20produced%20during%20the%20tests%20execution/TASK.md) [Qwen]
