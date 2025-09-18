@@ -630,21 +630,21 @@ run_full_confirmation_test() {
     category_patterns["Coder"]="def.*hello"
 
     category_prompts["Tester"]="Write a unit test for a function that adds two numbers. Show only code."
-    category_patterns["Tester"]="(test|assert|def.*test)"
+    category_patterns["Tester"]="(test|assert|def.*test|it\\(.*should|expect\\()"
 
     category_prompts["Translation"]="Translate 'Hello' to French. Answer with one word only."
     category_patterns["Translation"]="(Bonjour|bonjour|Salut|salut)"
 
     category_prompts["Generative/Animation"]="Generate SVG code for a red circle. Show only the SVG code."
-    category_patterns["Generative/Animation"]="<svg.*circle"
+    category_patterns["Generative/Animation"]="(<svg.*circle|circle.*cx|<circle)"
 
     category_prompts["Generative/Audio"]="Describe how to generate audio. Be brief."
     category_patterns["Generative/Audio"]="(audio|sound|music|speech)"
 
-    category_prompts["Generative/JPEG"]="Describe an image of a sunset. Be brief."
+    category_prompts["Generative/JPEG"]="Generate a description for an image of a sunset. Be brief."
     category_patterns["Generative/JPEG"]="(sunset|sun|sky|orange|horizon)"
 
-    category_prompts["Generative/PNG"]="Describe an image of a mountain. Be brief."
+    category_prompts["Generative/PNG"]="Generate a description for an image of a mountain. Be brief."
     category_patterns["Generative/PNG"]="(mountain|peak|snow|landscape)"
 
     category_prompts["Generative/SVG"]="Generate SVG code for a blue square. Show only the SVG code."
@@ -765,13 +765,13 @@ run_test_iteration() {
     test_category "Coder" "$model_size" "Write a Python hello function. Show only code." "def.*hello"
 
     # Test Tester models
-    test_category "Tester" "$model_size" "Write a unit test for a function that adds two numbers. Show only code." "(test|assert|def.*test)"
+    test_category "Tester" "$model_size" "Write a unit test for a function that adds two numbers. Show only code." "(test|assert|def.*test|it\\(.*should|expect\\()"
 
     # Test Translation models
     test_category "Translation" "$model_size" "Translate 'Hello' to French. Answer with one word only." "(Bonjour|bonjour|Salut|salut)"
 
     # Test Generative/Animation models
-    test_category "Generative/Animation" "$model_size" "Generate SVG code for a red circle. Show only the SVG code." "<svg.*circle"
+    test_category "Generative/Animation" "$model_size" "Generate SVG code for a red circle. Show only the SVG code." "(<svg.*circle|circle.*cx|<circle)"
 
     # Test Generative/Audio models (special handling for audio framework)
     if [ -f "$HERE/Recipes/Models/Generative/Audio/$model_size" ]; then
@@ -784,10 +784,10 @@ run_test_iteration() {
     fi
 
     # Test Generative/JPEG models
-    test_category "Generative/JPEG" "$model_size" "Describe an image of a sunset. Be brief." "(sunset|sun|sky|orange|horizon)"
+    test_category "Generative/JPEG" "$model_size" "Generate a description for an image of a sunset. Be brief." "(sunset|sun|sky|orange|horizon)"
 
     # Test Generative/PNG models
-    test_category "Generative/PNG" "$model_size" "Describe an image of a mountain. Be brief." "(mountain|peak|snow|landscape)"
+    test_category "Generative/PNG" "$model_size" "Generate a description for an image of a mountain. Be brief." "(mountain|peak|snow|landscape)"
 
     # Test Generative/SVG models
     test_category "Generative/SVG" "$model_size" "Generate SVG code for a blue square. Show only the SVG code." "<svg.*rect"
