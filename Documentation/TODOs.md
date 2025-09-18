@@ -5,7 +5,7 @@
 
 ## In progress
 
-- Cover all models by all supported Builder categories
+- TASK: [004 Cover all models by all supported Builder categories](../AITasks/Tasks/004%20Cover%20all%20models%20by%20all%20supported%20Builder%20categories/TASK.md)
 - Integrate RAG with Fixers to pickup from out memory database
 - Fixers: Support for Goose
 - Fixers: Auto detection between AI CLIs sorted by priority - claude, goose, qwen, etc
@@ -16,7 +16,7 @@
 
 - FIXME: Audio model for 7B does not exist on Ollama
 - Make sure that every model before it is installed is checked if exists in Ollama, as fallback pull it and apply from Hugging Face
-- TASK: [003 Testing Scripts](../Claude/Tasks/003%20Testing%20Scripts/TASK.md)
+- TASK: [003 Testing Scripts](../AITasks/Tasks/003%20Testing%20Scripts/TASK.md)
 - FIXME:
 
   ```bash
