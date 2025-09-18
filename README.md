@@ -9,13 +9,13 @@ AI powered application building pipeline
 From the root of the project execute:
 
 ```bash
-./Scripts/install.sh
+./install.sh
 ```
 
 or
 
 ```bash
-./Scripts/install.sh CATEGORY
+./install.sh CATEGORY
 ```
 
 where `CATEGORY` can be on of the following categories:
