@@ -1,6 +1,6 @@
 # Hello Goose!
 
-Before you start check all directories under `AITAsks/Tasks`. Each directory is one task done by you.
+Before you start check all directories under `AITasks/Tasks`. Each directory is one task done by you.
 Completed tasks have report markdown file: `TASK_REPORT.md`. Go through each task and its report to learn what you have done so far with the project.
 Everything is sorted by number: `001 Description...`, `002 Description`, etc. Also check all relevan markdown file which could be in tasks directories as additions.
 
