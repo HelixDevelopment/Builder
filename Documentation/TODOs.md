@@ -6,6 +6,7 @@
 ## In progress
 
 - Cover all models by all supported Builder categories
+- Integrate RAG with Fixers to pickup from out memory database
 - Fixers: Support for Goose
 - Fixers: Auto detection between AI CLIs sorted by priority - claude, goose, qwen, etc
 - Web UI for tasks with APIs (instead of manual editing). After we create or edit task submit with confirmation sends it to execution to the AI
