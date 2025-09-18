@@ -295,18 +295,21 @@ apply_fixes() {
     # THEN: Find all failed models and apply model-specific fixes
     for model_dir in "$TESTS_DIR"/*/; do
         if [ -d "$model_dir" ]; then
-            local model_name=$(basename "$model_dir")
+            local dir_name=$(basename "$model_dir")
             local status_file="$model_dir/test_status.txt"
-            
+
+            # Extract model name from directory (format: Category_model:version)
+            local model_name="${dir_name#*_}"  # Remove category prefix
+
             if [ -f "$status_file" ] && [ "$(cat "$status_file")" = "FAILED" ]; then
                 log_fix "Attempting to fix issues for: $model_name"
-                
+
                 # Check what issues exist
                 for issue_file in "$model_dir/Issues"/*.md; do
                     if [ -f "$issue_file" ]; then
                         local issue_type=$(basename "$issue_file" .md)
                         log_fix "Fixing issue: $issue_type for $model_name"
-                        
+
                         case "$issue_type" in
                             "MODEL_NOT_AVAILABLE")
                                 log_fix "Attempting to install model: $model_name"
@@ -448,12 +451,15 @@ apply_ai_fixes() {
     # Find all failed models and create issue data for AI analysis
     for model_dir in "$TESTS_DIR"/*/; do
         if [ -d "$model_dir" ]; then
-            local model_name=$(basename "$model_dir")
+            local dir_name=$(basename "$model_dir")
             local status_file="$model_dir/test_status.txt"
-            
+
+            # Extract model name from directory (format: Category_model:version)
+            local model_name="${dir_name#*_}"  # Remove category prefix
+
             if [ -f "$status_file" ] && [ "$(cat "$status_file")" = "FAILED" ]; then
                 log_fix "🔍 $FIXER_TYPE analyzing: $model_name" >&2
-                
+
                 # Create issue data JSON for AI analysis
                 local issue_json="$model_dir/ai_issue.json"
                 create_ai_issue_json "$model_name" "$model_dir" "$issue_json"
@@ -555,64 +561,112 @@ EOF
 # Run comprehensive confirmation test of ALL models
 run_full_confirmation_test() {
     log_info "🚀 Starting comprehensive confirmation test..."
-    
+
     local confirmation_total=0
     local confirmation_passed=0
     local confirmation_failed=0
-    
+
     # Test ALL models from all categories
     local model_size=$(cat "$TESTS_DIR/model_size.txt")
-    
-    # Test General models
-    local general_models_file="$HERE/Recipes/Models/General/$model_size"
-    if [ -f "$general_models_file" ]; then
-        log_info "📋 Confirmation testing General models..."
+
+    # Define test configurations for each category
+    declare -A category_prompts
+    declare -A category_patterns
+
+    category_prompts["General"]="What is 2+2? Answer briefly."
+    category_patterns["General"]=".*4.*"
+
+    category_prompts["Coder"]="Write a Python hello function. Show only code."
+    category_patterns["Coder"]="def.*hello"
+
+    category_prompts["Tester"]="Write a unit test for a function that adds two numbers. Show only code."
+    category_patterns["Tester"]="(test|assert|def.*test)"
+
+    category_prompts["Translation"]="Translate 'Hello' to French. Answer with one word only."
+    category_patterns["Translation"]="(Bonjour|bonjour|Salut|salut)"
+
+    category_prompts["Generative/Animation"]="Generate SVG code for a red circle. Show only the SVG code."
+    category_patterns["Generative/Animation"]="<svg.*circle"
+
+    category_prompts["Generative/Audio"]="Describe how to generate audio. Be brief."
+    category_patterns["Generative/Audio"]="(audio|sound|music|speech)"
+
+    category_prompts["Generative/JPEG"]="Describe an image of a sunset. Be brief."
+    category_patterns["Generative/JPEG"]="(sunset|sun|sky|orange|horizon)"
+
+    category_prompts["Generative/PNG"]="Describe an image of a mountain. Be brief."
+    category_patterns["Generative/PNG"]="(mountain|peak|snow|landscape)"
+
+    category_prompts["Generative/SVG"]="Generate SVG code for a blue square. Show only the SVG code."
+    category_patterns["Generative/SVG"]="<svg.*rect"
+
+    # Test each category
+    for category in "General" "Coder" "Tester" "Translation" "Generative/Animation" "Generative/Audio" "Generative/JPEG" "Generative/PNG" "Generative/SVG"; do
+        local models_file="$HERE/Recipes/Models/$category/$model_size"
+
+        if [ ! -f "$models_file" ]; then
+            log_warning "Skipping $category - models file not found"
+            continue
+        fi
+
+        # Handle audio models specially
+        if [[ "$category" == "Generative/Audio" ]]; then
+            local audio_content=$(grep -v "^#" "$models_file" | grep -v "^$" | head -1)
+            if [ -n "$audio_content" ]; then
+                log_info "📋 Confirmation testing Audio models (external framework)..."
+
+                # Check if audio framework exists
+                local audio_dir="$HERE/../AudioModels"
+                while IFS= read -r model_line || [[ -n "$model_line" ]]; do
+                    if [[ -z "$model_line" || "$model_line" =~ ^# ]]; then
+                        continue
+                    fi
+
+                    ((confirmation_total++))
+                    local model_name=$(echo "$model_line" | cut -d: -f1)
+                    log_info "🔍 Confirming: $model_name (Audio framework)"
+
+                    if [ -d "$audio_dir" ] && [ -f "$audio_dir/generate_music.py" -o -f "$audio_dir/text_to_speech.py" ]; then
+                        ((confirmation_passed++))
+                        log_success "✅ CONFIRMED: $model_name (Audio framework installed)"
+                    else
+                        ((confirmation_failed++))
+                        log_error "❌ CONFIRMATION FAILED: $model_name (Audio framework missing)"
+                    fi
+                done < "$models_file"
+                continue
+            fi
+        fi
+
+        log_info "📋 Confirmation testing $category models..."
+
         while IFS= read -r model_name || [[ -n "$model_name" ]]; do
             if [[ -z "$model_name" || "$model_name" =~ ^# ]]; then
                 continue
             fi
-            
+
             ((confirmation_total++))
-            log_info "🔍 Confirming: $model_name"
-            
-            if test_single_model_confirmation "$model_name"; then
+            log_info "🔍 Confirming: $model_name ($category)"
+
+            local prompt="${category_prompts[$category]}"
+            local pattern="${category_patterns[$category]}"
+
+            if test_single_model_confirmation "$model_name" "$prompt" "$pattern"; then
                 ((confirmation_passed++))
                 log_success "✅ CONFIRMED: $model_name"
             else
                 ((confirmation_failed++))
                 log_error "❌ CONFIRMATION FAILED: $model_name"
             fi
-        done < "$general_models_file"
-    fi
-    
-    # Test Coder models  
-    local coder_models_file="$HERE/Recipes/Models/Coder/$model_size"
-    if [ -f "$coder_models_file" ]; then
-        log_info "📋 Confirmation testing Coder models..."
-        while IFS= read -r model_name || [[ -n "$model_name" ]]; do
-            if [[ -z "$model_name" || "$model_name" =~ ^# ]]; then
-                continue
-            fi
-            
-            ((confirmation_total++))
-            log_info "🔍 Confirming: $model_name"
-            
-            if test_single_model_confirmation "$model_name" "Write a Python hello function. Show only code." "def.*hello"; then
-                ((confirmation_passed++))
-                log_success "✅ CONFIRMED: $model_name"
-            else
-                ((confirmation_failed++))
-                log_error "❌ CONFIRMATION FAILED: $model_name"
-            fi
-        done < "$coder_models_file"
-    fi
-    
+        done < "$models_file"
+    done
+
     # Generate confirmation report
     log_info "📊 Confirmation Test Results:"
     log_info "   Total models tested: $confirmation_total"
     log_success "   Confirmed working: $confirmation_passed"
     log_error "   Failed confirmation: $confirmation_failed"
-    
+
     if [ $confirmation_failed -eq 0 ]; then
         log_success "🎉 ALL MODELS CONFIRMED WORKING!"
         return 0
@@ -646,62 +700,314 @@ test_single_model_confirmation() {
 # Run test iteration
 run_test_iteration() {
     log_info "=== Test Iteration $CURRENT_ITERATION ==="
-    
+
     TOTAL_MODELS=0
     PASSED_MODELS=0
     FAILED_MODELS=0
-    
-    # Test General models
+
     local model_size=$(cat "$TESTS_DIR/model_size.txt")
-    local models_file="$HERE/Recipes/Models/General/$model_size"
-    
-    if [ -f "$models_file" ]; then
-        log_info "Testing General models from: $models_file"
-        
-        while IFS= read -r model_name || [[ -n "$model_name" ]]; do
-            if [[ -z "$model_name" || "$model_name" =~ ^# ]]; then
-                continue
-            fi
-            
-            ((TOTAL_MODELS++))
-            
-            if test_single_model "$model_name" "What is 2+2? Answer briefly." ".*4.*"; then
-                ((PASSED_MODELS++))
-            else
-                ((FAILED_MODELS++))
-            fi
-            
-        done < "$models_file"
-    else
-        log_error "Models file not found: $models_file"
+
+    # Test General models
+    test_category "General" "$model_size" "What is 2+2? Answer briefly." ".*4.*"
+
+    # Test Coder models
+    test_category "Coder" "$model_size" "Write a Python hello function. Show only code." "def.*hello"
+
+    # Test Tester models
+    test_category "Tester" "$model_size" "Write a unit test for a function that adds two numbers. Show only code." "(test|assert|def.*test)"
+
+    # Test Translation models
+    test_category "Translation" "$model_size" "Translate 'Hello' to French. Answer with one word only." "(Bonjour|bonjour|Salut|salut)"
+
+    # Test Generative/Animation models
+    test_category "Generative/Animation" "$model_size" "Generate SVG code for a red circle. Show only the SVG code." "<svg.*circle"
+
+    # Test Generative/Audio models (special handling for audio framework)
+    if [ -f "$HERE/Recipes/Models/Generative/Audio/$model_size" ]; then
+        local audio_content=$(grep -v "^#" "$HERE/Recipes/Models/Generative/Audio/$model_size" | grep -v "^$" | head -1)
+        if [ -n "$audio_content" ]; then
+            # Audio models use special format and external framework, skip normal testing
+            log_info "Audio models use external framework - checking installation only"
+            test_audio_category "$model_size"
+        fi
+    fi
+
+    # Test Generative/JPEG models
+    test_category "Generative/JPEG" "$model_size" "Describe an image of a sunset. Be brief." "(sunset|sun|sky|orange|horizon)"
+
+    # Test Generative/PNG models
+    test_category "Generative/PNG" "$model_size" "Describe an image of a mountain. Be brief." "(mountain|peak|snow|landscape)"
+
+    # Test Generative/SVG models
+    test_category "Generative/SVG" "$model_size" "Generate SVG code for a blue square. Show only the SVG code." "<svg.*rect"
+
+    log_info "Iteration $CURRENT_ITERATION Results: $PASSED_MODELS passed, $FAILED_MODELS failed out of $TOTAL_MODELS total"
+
+    return $FAILED_MODELS
+}
+
+# Test audio category models (special handling)
+test_audio_category() {
+    local model_size="$1"
+    local models_file="$HERE/Recipes/Models/Generative/Audio/$model_size"
+
+    if [ ! -f "$models_file" ]; then
+        log_warning "Audio models file not found: $models_file"
         return 1
     fi
-    
-    # Test a few Coder models
-    local coder_models_file="$HERE/Recipes/Models/Coder/$model_size"
-    if [ -f "$coder_models_file" ]; then
-        log_info "Testing Coder models"
-        
-        # Test just the first 2 coder models to save time
-        head -2 "$coder_models_file" | while IFS= read -r model_name || [[ -n "$model_name" ]]; do
-            if [[ -z "$model_name" || "$model_name" =~ ^# ]]; then
-                continue
-            fi
-            
-            ((TOTAL_MODELS++))
-            
-            if test_single_model "$model_name" "Write a Python hello function. Show only code." "def.*hello"; then
-                ((PASSED_MODELS++))
-            else
-                ((FAILED_MODELS++))
-            fi
-            
-        done
+
+    log_info "Testing Audio models (external framework) from: $models_file"
+
+    local category_models=0
+    local category_passed=0
+
+    # Check if AudioModels directory exists as a sign of installation
+    local audio_dir="$HERE/../AudioModels"
+
+    while IFS= read -r model_line || [[ -n "$model_line" ]]; do
+        if [[ -z "$model_line" || "$model_line" =~ ^# ]]; then
+            continue
+        fi
+
+        ((TOTAL_MODELS++))
+        ((category_models++))
+
+        # Parse audio model format: model_name:type:repository_id
+        local model_name=$(echo "$model_line" | cut -d: -f1)
+        local model_type=$(echo "$model_line" | cut -d: -f2)
+        local repo_id=$(echo "$model_line" | cut -d: -f3)
+
+        local model_dir="$TESTS_DIR/Generative_Audio_${model_name}"
+        mkdir -p "$model_dir"/{Generated,Issues}
+
+        # Check if audio framework is installed
+        if [ -d "$audio_dir" ] && [ -f "$audio_dir/generate_music.py" -o -f "$audio_dir/text_to_speech.py" ]; then
+            log_success "✅ Audio framework installed for $model_name ($model_type)"
+            echo "PASSED" > "$model_dir/test_status.txt"
+
+            # Create report
+            cat > "$model_dir/Report.md" << EOF
+# Test Report: $model_name (Audio)
+
+**Date**: $TEST_DATE
+**Status**: ✅ PASSED (Framework Available)
+**Type**: $model_type
+**Repository**: $repo_id
+
+## Test Details
+- Audio models use external framework
+- Framework installation verified
+- Model type: $model_type
+
+## Files Created
+- Report.md (this file)
+- test_status.txt (PASSED status)
+EOF
+            ((PASSED_MODELS++))
+            ((category_passed++))
+        else
+            log_warning "❌ Audio framework not installed for $model_name"
+            document_issue_with_dir "$model_name" "AUDIO_FRAMEWORK_MISSING" "Audio framework not installed. Run: ./Scripts/install.sh Generative/Audio" "$model_dir"
+            ((FAILED_MODELS++))
+        fi
+
+    done < "$models_file"
+
+    if [ $category_models -gt 0 ]; then
+        log_info "Audio results: $category_passed/$category_models passed"
     fi
-    
-    log_info "Iteration $CURRENT_ITERATION Results: $PASSED_MODELS passed, $FAILED_MODELS failed out of $TOTAL_MODELS total"
-    
-    return $FAILED_MODELS
+}
+
+# Test a specific category of models
+test_category() {
+    local category="$1"
+    local model_size="$2"
+    local test_prompt="$3"
+    local expected_pattern="$4"
+
+    local models_file="$HERE/Recipes/Models/$category/$model_size"
+
+    if [ ! -f "$models_file" ]; then
+        log_warning "Models file not found for $category: $models_file"
+        return 1
+    fi
+
+    log_info "Testing $category models from: $models_file"
+
+    local category_models=0
+    local category_passed=0
+
+    while IFS= read -r model_name || [[ -n "$model_name" ]]; do
+        if [[ -z "$model_name" || "$model_name" =~ ^# ]]; then
+            continue
+        fi
+
+        ((TOTAL_MODELS++))
+        ((category_models++))
+
+        # Create category-specific test directory
+        local category_safe=$(echo "$category" | tr '/' '_')
+        local model_dir="$TESTS_DIR/${category_safe}_${model_name}"
+
+        if test_single_model_with_dir "$model_name" "$test_prompt" "$expected_pattern" "$model_dir"; then
+            ((PASSED_MODELS++))
+            ((category_passed++))
+        else
+            ((FAILED_MODELS++))
+        fi
+
+    done < "$models_file"
+
+    if [ $category_models -gt 0 ]; then
+        log_info "$category results: $category_passed/$category_models passed"
+    fi
+}
+
+# Test a single model with custom directory
+test_single_model_with_dir() {
+    local model_name="$1"
+    local test_prompt="$2"
+    local expected_pattern="$3"
+    local model_test_dir="$4"
+
+    log_info "Testing model: $model_name"
+
+    mkdir -p "$model_test_dir"/{Generated,Issues}
+
+    # Check if model is available
+    local ollama_output=$(ollama list)
+
+    if ! echo "$ollama_output" | grep -q "$model_name"; then
+        log_warning "Model $model_name not available"
+        document_issue_with_dir "$model_name" "MODEL_NOT_AVAILABLE" "Model not installed in Ollama" "$model_test_dir"
+        return 1
+    fi
+
+    # Test the model
+    local output_file="$model_test_dir/Generated/test_response.txt"
+    local raw_output_file="$model_test_dir/Generated/test_response_raw.txt"
+    local error_file="$model_test_dir/Issues/test_error.log"
+
+    if timeout $TIMEOUT_DURATION bash -c "
+        echo '$test_prompt' | ollama run '$model_name' 2>'$error_file' |
+        tee '$raw_output_file' |
+        sed 's/\x1b\[[0-9;]*[mGKH]//g' |
+        sed 's/\[?[0-9]*[hlc]//g' |
+        sed 's/\[[0-9]*G//g' |
+        tr -d '\r' |
+        grep -v '^$' |
+        head -10 > '$output_file'
+    "; then
+
+        if [ -s "$output_file" ]; then
+            local response_content=$(cat "$output_file")
+            local cleaned_response=$(echo "$response_content" | tr -d '\n\r' | sed 's/[[:space:]]\+/ /g')
+
+            if [[ "$cleaned_response" =~ $expected_pattern ]]; then
+                log_success "✅ $model_name PASSED"
+                echo "PASSED" > "$model_test_dir/test_status.txt"
+
+                # Create report
+                cat > "$model_test_dir/Report.md" << EOF
+# Test Report: $model_name
+
+**Date**: $TEST_DATE
+**Status**: ✅ PASSED
+**Iteration**: $CURRENT_ITERATION
+
+## Test Details
+- **Prompt**: $test_prompt
+- **Expected Pattern**: $expected_pattern
+- **Response Length**: ${#response_content} characters
+
+## Generated Content
+\`\`\`
+$cleaned_response
+\`\`\`
+
+## Files Created
+- Generated/test_response.txt (cleaned response)
+- Generated/test_response_raw.txt (original with control chars)
+- Report.md (this file)
+- test_status.txt (PASSED status)
+EOF
+                return 0
+            else
+                log_error "❌ $model_name response doesn't match pattern"
+                document_issue_with_dir "$model_name" "UNEXPECTED_RESPONSE" "Response '$cleaned_response' doesn't match pattern '$expected_pattern'" "$model_test_dir"
+                return 1
+            fi
+        else
+            log_error "❌ $model_name produced no output"
+            document_issue_with_dir "$model_name" "NO_OUTPUT" "Model produced no output within timeout" "$model_test_dir"
+            return 1
+        fi
+    else
+        log_error "❌ $model_name timed out or failed"
+        document_issue_with_dir "$model_name" "TIMEOUT" "Model failed to respond within ${TIMEOUT_DURATION}s" "$model_test_dir"
+        return 1
+    fi
+}
+
+# Document issues with custom directory
+document_issue_with_dir() {
+    local model_name="$1"
+    local issue_type="$2"
+    local description="$3"
+    local model_dir="$4"
+
+    local issue_file="$model_dir/Issues/${issue_type}.md"
+    mkdir -p "$(dirname "$issue_file")"
+
+    cat > "$issue_file" << EOF
+# Issue: $issue_type
+
+**Model**: $model_name
+**Date**: $TEST_DATE
+**Iteration**: $CURRENT_ITERATION
+
+## Description
+$description
+
+## Potential Fixes
+EOF
+
+    case "$issue_type" in
+        "MODEL_NOT_AVAILABLE")
+            cat >> "$issue_file" << EOF
+1. Install model: \`ollama pull $model_name\`
+2. Check model name spelling
+3. Verify model exists in Ollama registry
+EOF
+            ;;
+        "TIMEOUT")
+            cat >> "$issue_file" << EOF
+1. Increase timeout duration
+2. Check system resources (RAM/VRAM usage)
+3. Try smaller model variant
+4. Restart Ollama service
+EOF
+            ;;
+        "UNEXPECTED_RESPONSE")
+            cat >> "$issue_file" << EOF
+1. Review and adjust expected response pattern
+2. Check model behavior with different prompts
+3. Verify model is properly loaded
+4. Check for model corruption
+EOF
+            ;;
+        "NO_OUTPUT")
+            cat >> "$issue_file" << EOF
+1. Check Ollama service status
+2. Verify model is not corrupted
+3. Check system resource availability
+4. Try re-pulling the model
+EOF
+            ;;
+    esac
+
+    echo "FAILED" > "$model_dir/test_status.txt"
+    log_error "Issue documented: $issue_file"
 }
 
 # Generate final report
@@ -735,14 +1041,18 @@ EOF
     # Add individual model results
     for model_dir in "$TESTS_DIR"/*/; do
         if [ -d "$model_dir" ] && [[ "$(basename "$model_dir")" != "$(basename "$TESTS_DIR")" ]]; then
-            local model_name=$(basename "$model_dir")
+            local dir_name=$(basename "$model_dir")
             local status="❌ FAILED"
-            
+
+            # Extract category and model name from directory (format: Category_model:version)
+            local category="${dir_name%%_*}"
+            local model_name="${dir_name#*_}"
+
             if [ -f "$model_dir/test_status.txt" ] && [ "$(cat "$model_dir/test_status.txt")" = "PASSED" ]; then
                 status="✅ PASSED"
             fi
-            
-            echo "- **$model_name**: $status" >> "$report_file"
+
+            echo "- **$model_name** ($category): $status" >> "$report_file"
         fi
     done
     
