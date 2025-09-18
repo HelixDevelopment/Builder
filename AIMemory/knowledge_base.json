@@ -2,7 +2,6 @@
   "general_patterns": {},
   "model_specific_tips": {
     "openthinker:7b": [
-      "MODEL_NOT_AVAILABLE: Failed - The issue of MODEL_NOT_AVAILABLE is likely due to an incorrect or missing config",
       "UNEXPECTED_RESPONSE: Failed - The issue is related to how Ollama interacts with AI models. The model responses",
       "UNEXPECTED_RESPONSE: Failed - ",
       "TIMEOUT: Failed - ",
@@ -11,12 +10,15 @@
       "UNEXPECTED_RESPONSE: Success - The root cause is that the models are responding in verbose format instead of ex",
       "TIMEOUT: Success - The issue is identified as verbose responses instead of simple answers by the mo",
       "UNEXPECTED_RESPONSE: Success - The issue appears to be related to how models handle prompts and responses in au",
-      "TIMEOUT: Success - The model is returning a verbose response that doesn'<\uff5cbegin\u2581of\u2581sentence\uff5c> expla"
+      "TIMEOUT: Success - The model is returning a verbose response that doesn'<\uff5cbegin\u2581of\u2581sentence\uff5c> expla",
+      "TIMEOUT: Success - The root cause is that the AI model may be generating verbose responses instead "
     ],
     "Animation_starcoder2:7b": [
       "UNEXPECTED_RESPONSE: Success - The issue here is rooted in how models handle prompts and responses when used fo",
       "UNEXPECTED_RESPONSE: Success - The issue appears to be related to how models respond when given a specific inpu",
-      "UNEXPECTED_RESPONSE: Success - The issue is likely due to the models' verbose responses instead of expected sim"
+      "UNEXPECTED_RESPONSE: Success - The issue is likely due to the models' verbose responses instead of expected sim",
+      "UNEXPECTED_RESPONSE: Success - The problem seems to be related to the models' response format. It seems that th",
+      "UNEXPECTED_RESPONSE: Success - The model is giving verbose responses instead of expected simple answer."
     ],
     "Audio_bark-small": [
       "AUDIO_FRAMEWORK_MISSING: Failed - The issue seems to be related to how the audio framework is installed and config",
@@ -47,14 +49,16 @@
     "JPEG_llava-llama3:8b": [
       "MODEL_NOT_AVAILABLE: Success - The model is giving verbose responses instead of the expected simple answer",
       "MODEL_NOT_AVAILABLE: Failed - The issue is due to the model being unavailable in Ollama. This usually means th",
-      "MODEL_NOT_AVAILABLE: Failed - The error is likely due to a configuration issue where Ollama does not recognize"
+      "MODEL_NOT_AVAILABLE: Failed - The error is likely due to a configuration issue where Ollama does not recognize",
+      "MODEL_NOT_AVAILABLE: Failed - The issue is likely related to how Ollama interacts with models and their instal"
     ],
     "PNG_bakllava:7b": [
       "UNEXPECTED_RESPONSE: Success - The model is giving verbose responses instead of expected simple answer"
     ],
     "PNG_llava-llama3:8b": [
       "MODEL_NOT_AVAILABLE: Failed - The issue is likely due to the fact that the AI model is not installed correctly",
-      "MODEL_NOT_AVAILABLE: Failed - "
+      "MODEL_NOT_AVAILABLE: Failed - ",
+      "MODEL_NOT_AVAILABLE: Failed - The Model PNG_llava-llama3:8b is not installed in Ollama and hence it's throwing"
     ],
     "codellama:7b": [
       "UNEXPECTED_RESPONSE: Failed - The issue is due to how models handle prompts and responses in automated tests f"
@@ -68,7 +72,8 @@
     "TIMEOUT": [
       "The issue appears to be related to how the models are handling verbose responses and simple answers.",
       "The issue is identified as verbose responses instead of simple answers by the model.",
-      "The model is returning a verbose response that doesn'<\uff5cbegin\u2581of\u2581sentence\uff5c> explain what 4 actually m"
+      "The model is returning a verbose response that doesn'<\uff5cbegin\u2581of\u2581sentence\uff5c> explain what 4 actually m",
+      "The root cause is that the AI model may be generating verbose responses instead of expected simple a"
     ],
     "UNEXPECTED_RESPONSE": [
       "The issue is likely due to the model's inability to correctly parse and generate responses based on ",
@@ -79,7 +84,9 @@
       "The issue appears to be related to how models respond when given a specific input that they are desi",
       "The model is giving verbose responses instead of expected simple answer",
       "The issue is likely due to the models' verbose responses instead of expected simple answers. This co",
-      "The issue is likely due to how models handle unexpected responses."
+      "The issue is likely due to how models handle unexpected responses.",
+      "The problem seems to be related to the models' response format. It seems that they are producing ver",
+      "The model is giving verbose responses instead of expected simple answer."
     ],
     "AUDIO_FRAMEWORK_MISSING": [
       "The issue seems to be rooted in the configuration of the audio framework. It is not installed which ",
@@ -94,5 +101,5 @@
   },
   "failure_patterns": {},
   "version": "1.0",
-  "last_updated": "2025-09-18T16:48:58.006944"
+  "last_updated": "2025-09-18T17:18:09.769823"
 }
