@@ -1,7 +1,8 @@
-# Testing Scripts
+# Cover all models by all supported Builder categories
 
 Before you start check all directories under `AITAsks/Tasks`. Each directory is one task done by you.
-Completed tasks have report markdown file: `TASK_REPORT.md`. Go through each report to learn what you have done so far with the project.
+Completed tasks have report markdown file: `TASK_REPORT.md`. Go through each task and its report to learn what you have done so far with the project.
+Everything is sorted by number: `001 Dewcription...`, `002 Description`, etc.
 
 After you are done with this, please extend the testing script(s) to support all of our models:
 
