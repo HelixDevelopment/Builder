@@ -5,7 +5,6 @@
 
 ## In progress
 
-- Add all Upstreams supported: GitLab, GitFlic, Gitee, GitVerse
 - Cover all models by all supported Builder categories
 - Fixers: Support for Goose
 - Fixers: Auto detection between AI CLIs sorted by priority - claude, goose, qwen, etc
@@ -28,4 +27,5 @@
   ```
 - Command for CLI AI has to be customizable with the def. val. and to run in headless mode
 - Fixers: Add support for multiple `Fixers` - Besides `Claude` add `Qwen` as option/default one
+- Add all Upstreams supported: GitLab, GitFlic, Gitee, GitVerse
 
