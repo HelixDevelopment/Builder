@@ -1,0 +1,18 @@
+#!/bin/bash
+
+if ! test -e ./gemini-cli-ollama/node_modules/.bin/gemini; then
+
+    if ! ./Scripts/install_ollama_gemini.sh; then
+
+        echo "ERROR: Failed to install Gemini for Ollama"
+        exit 1
+    fi
+fi
+
+if ! test ./gemini-cli-ollama/node_modules/.bin/gemini
+
+    echo "Gemini for Ollama not found at './gemini-cli-ollama/node_modules/.bin/gemini'"
+    exit 1
+fi
+
+./gemini-cli-ollama/node_modules/.bin/gemini
