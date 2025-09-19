@@ -3,4 +3,5 @@ qwen2.5-coder:7b
 deepseek-coder-v2:16b-lite-instruct-q4_K_M
 deepseek-coder:6.7b
 llama3.1:8b
+llama3.1:8b-instruct
 codellama:7b
