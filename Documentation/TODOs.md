@@ -10,7 +10,7 @@
 
 ## In progress
 
-- TASK: [006 Hello Qwen](../AITasks/Tasks/006%20Hello%20Qwen/TASK.md) [Qwen]
+- Enable Goose worker
 - Integrate RAG with Fixers to pickup from out memory database
 - Fixers: Support for Goose
 - Fixers: Auto detection between AI CLIs sorted by priority - claude, goose, qwen, etc
@@ -37,3 +37,4 @@
 - TASK: [004 Cover all models by all supported Builder categories](../AITasks/Tasks/004%20Cover%20all%20models%20by%20all%20supported%20Builder%20categories/TASK.md) [Claude]
 - Write log files during the testing [Claude]
 - TASK: [FIXME: 005 Make sure that tests are running with no errors or warnings](../AITasks/Tasks/005%20Fix%20errors%20produced%20during%20the%20tests%20execution/TASK.md) [Qwen]
+- TASK: [006 Hello Qwen](../AITasks/Tasks/006%20Hello%20Qwen/TASK.md) [Qwen]
