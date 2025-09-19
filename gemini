@@ -9,7 +9,7 @@ if ! test -e ./gemini-cli-ollama/node_modules/.bin/gemini; then
     fi
 fi
 
-if ! test ./gemini-cli-ollama/node_modules/.bin/gemini
+if ! test ./gemini-cli-ollama/node_modules/.bin/gemini; then
 
     echo "Gemini for Ollama not found at './gemini-cli-ollama/node_modules/.bin/gemini'"
     exit 1
