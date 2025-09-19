@@ -6,3 +6,4 @@ llama3.1:8b
 llama3.1:8b-instruct
 codellama:7b
 granite3.2:8b
+granite3.3:8b
