@@ -1,4 +1,6 @@
 # SVG generation models - typically handled by code-capable models
+qwen3-coder:latest
 qwen2.5-coder:7b
+deepseek-coder-v2:16b-lite-instruct-q4_K_M
 deepseek-coder:6.7b
 codellama:7b
