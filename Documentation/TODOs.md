@@ -12,7 +12,7 @@
 
 ## In progress
 
-- TASK: [007 Hello Ollama Gemini with DeepSeek R1](../AITasks/Tasks/007%20Hello%20Ollama%20Gemini%20with%20DeepSeek%20R1/TASK.md) [Gemini@Ollama@DeepSeekR1]
+- TASK: [007 Hello Ollama Gemini](../AITasks/Tasks/007%20Hello%20Ollama%20Gemini/TASK.md) [Gemini@Ollama]
 - Integrate RAG with Fixers to pickup from out memory database
 - Fixers: Support for Goose
 - Fixers: Auto detection between AI CLIs sorted by priority - claude, goose, qwen, etc
