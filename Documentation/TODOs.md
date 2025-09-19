@@ -7,10 +7,10 @@
 ## For later
 
 - Make sure that our scripts present its work like qwen code cli: [https://github.com/QwenLM/qwen-code](https://github.com/QwenLM/qwen-code)
+- Enable Goose worker
 
 ## In progress
 
-- Enable Goose worker
 - Integrate RAG with Fixers to pickup from out memory database
 - Fixers: Support for Goose
 - Fixers: Auto detection between AI CLIs sorted by priority - claude, goose, qwen, etc
