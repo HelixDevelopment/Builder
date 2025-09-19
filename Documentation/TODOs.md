@@ -12,6 +12,7 @@
 
 ## In progress
 
+- Enable Tool Calling for chosen Ollama Model(s) that will be used with Ollama Gemini
 - TASK: [007 Hello Ollama Gemini](../AITasks/Tasks/007%20Hello%20Ollama%20Gemini/TASK.md) [Gemini@Ollama]
 - Define the `CONFIGURATION.sh` to override parameters from the global scope (`.bashrc`)
 - Integrate RAG with Fixers to pickup from out memory database
