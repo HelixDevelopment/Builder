@@ -18,6 +18,7 @@
 
 ## In progress
 
+- https://chutes.ai/app - Investigate the use
 - https://opencode.ai/docs/providers - Opencode with Ollama models
 - Define the `CONFIGURATION.sh` to override parameters from the global scope (`.bashrc`)
 - Integrate RAG with Fixers to pickup from out memory database
